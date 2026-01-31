@@ -18,7 +18,14 @@ class HelpCommand(CommandBase):
         """Prints help for a specific command or a list of all commands."""
         if args.command_name:
             if args.command_name in self.subparsers.choices:
-                self.subparsers.choices[args.command_name].print_help()
+                subparser = self.subparsers.choices[args.command_name]
+                if getattr(args, "_interactive", False):
+                    original_prog = subparser.prog
+                    subparser.prog = args.command_name
+                    subparser.print_help()
+                    subparser.prog = original_prog
+                else:
+                    subparser.print_help()
             else:
                 print(f"Unknown command: '{args.command_name}'")
             return

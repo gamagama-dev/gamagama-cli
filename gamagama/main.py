@@ -36,7 +36,10 @@ def run():
 
             command_parts = shlex.split(line)
             try:
-                args = parser.parse_args(command_parts)
+                # Pass a namespace object to indicate interactive mode to handlers.
+                ns = argparse.Namespace()
+                setattr(ns, "_interactive", True)
+                args = parser.parse_args(command_parts, namespace=ns)
                 if hasattr(args, "func"):
                     if args.func(args) is False:
                         break
