@@ -1,3 +1,3 @@
-def test_placeholder():
-    """A placeholder test to confirm pytest is set up correctly."""
-    assert True
+# Currently, there are no tests for main.py.
+# Command-specific tests are in test_commands.py.
+pass
