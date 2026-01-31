@@ -71,4 +71,4 @@ class RollCommand(CommandBase):
         rolls = [random.randint(1, sides) for _ in range(num_dice)]
         total = sum(rolls)
 
-        return f"{spec}: {rolls} = {total}"
+        return f"{spec}: {total} {rolls}"
