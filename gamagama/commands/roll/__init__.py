@@ -1,4 +1,6 @@
 import argparse
+import random
+import re
 
 from ..base import CommandBase
 
@@ -49,4 +51,24 @@ class RollCommand(CommandBase):
 
     def handle(self, args):
         """Handler for the 'roll' command."""
-        print(f"--> Rolling dice with spec: {' '.join(args.dice_spec)}")
+        for spec in args.dice_spec:
+            print(self._roll_dice(spec))
+
+    def _roll_dice(self, spec):
+        """Parses a single dice spec (e.g., '3d6') and returns the roll result."""
+        match = re.match(r"^(\d*)d(\d+|%)$", spec, re.IGNORECASE)
+        if not match:
+            return f"{spec}: Invalid dice specification."
+
+        num_dice_str, sides_str = match.groups()
+
+        num_dice = int(num_dice_str) if num_dice_str else 1
+        sides = 100 if sides_str == "%" else int(sides_str)
+
+        if sides == 0:
+            return f"{spec}: Cannot roll a 0-sided die."
+
+        rolls = [random.randint(1, sides) for _ in range(num_dice)]
+        total = sum(rolls)
+
+        return f"{spec}: {rolls} = {total}"
