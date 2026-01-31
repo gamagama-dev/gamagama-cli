@@ -4,7 +4,7 @@ import shlex
 import sys
 
 from .. import commands
-from ..commands.base import NoHelpArgumentParser
+from .core.parsers import NoHelpArgumentParser
 from .completer import Completer
 
 
