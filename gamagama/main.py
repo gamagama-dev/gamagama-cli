@@ -1,26 +1,60 @@
 import argparse
+import shlex
+import sys
+
+from . import commands
 
 
 def run():
     """Main entry point for the gamagama CLI."""
     parser = argparse.ArgumentParser(
-        description="A Game Master Game Manager for tabletop RPGs."
+        prog="gg", description="A Game Master Game Manager for tabletop RPGs."
     )
-    parser.parse_args()
+    subparsers = parser.add_subparsers(title="Commands", dest="command_name")
 
+    commands.discover_and_register_commands(subparsers)
+
+    # If command-line arguments are given, run in CLI mode and exit.
+    cli_args = sys.argv[1:]
+    if cli_args:
+        args = parser.parse_args(cli_args)
+        if hasattr(args, "func"):
+            args.func(args)
+        else:
+            parser.print_help()  # Show help if no command was given
+        return
+
+    # Otherwise, start interactive mode.
     print("Welcome to gamagama!")
     print("Type 'quit' to exit.")
 
     while True:
         try:
-            command = input("gg> ")
-            if command.lower() == 'quit':
+            line = input("gg> ")
+            if line.lower() == "quit":
                 break
-            # TODO: Process the command
-            print(f"Unknown command: {command}")
+            if not line.strip():
+                continue
+
+            command_parts = shlex.split(line)
+            try:
+                args = parser.parse_args(command_parts)
+                if hasattr(args, "func"):
+                    args.func(args)
+                else:
+                    # User entered a command name without required arguments
+                    if args.command_name:
+                        subparsers.choices[args.command_name].print_help()
+                    else:
+                        parser.print_help()
+            except SystemExit:
+                # Argparse calls sys.exit() on --help. Catch it to keep the loop running.
+                pass
+
         except (EOFError, KeyboardInterrupt):
             print("\nExiting.")
             break
+
 
 if __name__ == "__main__":
     run()
