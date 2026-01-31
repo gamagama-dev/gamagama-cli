@@ -25,3 +25,11 @@ python3 -m pip install .
 ```
 
 Both installation methods create the `gamagama` and `gg` command-line scripts and makes them available in your shell's path.
+
+## Uninstallation
+
+To uninstall the project, run:
+
+```bash
+python3 -m pip uninstall gamagama
+```
