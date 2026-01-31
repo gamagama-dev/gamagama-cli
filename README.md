@@ -6,13 +6,21 @@ The core of this repo will be a command-line tool called `gamagama`, or `gg` for
 
 ## Installation
 
-To install the project, run this command from the root directory:
+The recommended way to install `gamagama` is using `pipx`, which automatically handles virtual environments.
 
-```bash
-python3 -m pip install .
-```
+1.  **Install pipx**: If you don't have it, install `pipx` first.
+    ```bash
+    python3 -m pip install --user pipx
+    python3 -m pipx ensurepath
+    ```
+    You may need to open a new terminal for the path changes to take effect.
 
-This creates the `gamagama` and `gg` command-line scripts and makes them available in your shell's path.
+2.  **Install gamagama**: From the project's root directory, run:
+    ```bash
+    pipx install .
+    ```
+
+This installs the tool in an isolated environment and makes the `gamagama` and `gg` commands available system-wide.
 
 ## Usage
 
@@ -32,10 +40,10 @@ gg
 
 ## Uninstallation
 
-To uninstall the project, run:
+If you installed the project with `pipx`, run:
 
 ```bash
-python3 -m pip uninstall gamagama
+pipx uninstall gamagama
 ```
 
 ## Contributing
