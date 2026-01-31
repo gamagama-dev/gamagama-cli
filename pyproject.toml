@@ -1,0 +1,10 @@
+[project]
+name = "gamagama"
+version = "0.1.0"
+description = "A Game Master Game Manager for tabletop RPGs."
+readme = "README.md"
+requires-python = ">=3.8"
+
+[project.scripts]
+gamagama = "gamagama.main:run"
+gg = "gamagama.main:run"
