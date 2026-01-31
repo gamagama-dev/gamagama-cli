@@ -22,8 +22,7 @@ class RollCommand(CommandBase):
 
     MODS (Optional):
       !      Exploding Die: On a max roll, re-roll and add. (e.g. 6 on a d6).
-      *      Open-Ended Die: Re-roll on high/low results. The ranges are
-             die-specific (e.g., for a d100, add on 96-100, subtract on 1-5).
+      *      Open-Ended Die (d100 only): Add on 96-100, subtract on 1-5.
 
     EXAMPLES:
       gg roll 3d6         # Rolls three 6-sided dice and sums the result.
