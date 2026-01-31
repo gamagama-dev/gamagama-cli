@@ -76,23 +76,21 @@ def test_illegal_traversal_through_leaf():
         tree.insert(["roll", "fast"], "fast_fn")
 
 
-def test_overwrite_branch_with_leaf():
-    """
-    Test overwriting a Branch with a Leaf.
-    This is technically allowed by the data structure (it orphans the children),
-    though usually undesirable in logic. We test it to ensure deterministic behavior.
-    """
+def test_prevent_overwrite_leaf():
+    """Test that overwriting an existing Leaf raises an error."""
     tree = Tree()
-    # 1. Create 'player -> create' (player is a Branch)
+    tree.insert(["roll"], "original")
+
+    with pytest.raises(ValueError, match="Node 'roll' already exists"):
+        tree.insert(["roll"], "new")
+
+
+def test_prevent_overwrite_branch():
+    """Test that overwriting an existing Branch with a Leaf raises an error."""
+    tree = Tree()
+    # Creates 'player' as a Branch
     tree.insert(["player", "create"], "create_fn")
-    assert isinstance(tree.get(["player"]), Branch)
 
-    # 2. Overwrite 'player' with a Leaf
-    tree.insert(["player"], "player_fn")
-
-    node = tree.get(["player"])
-    assert isinstance(node, Leaf)
-    assert node.data == "player_fn"
-
-    # The children are effectively lost/orphaned from the tree
-    # (The Branch object might still exist in memory if referenced, but is detached from root)
+    # Try to overwrite 'player' with a Leaf
+    with pytest.raises(ValueError, match="Node 'player' already exists"):
+        tree.insert(["player"], "player_fn")

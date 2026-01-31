@@ -27,6 +27,9 @@ class Tree:
 
         # Create and attach the final Leaf
         leaf_name = path[-1]
+        if leaf_name in current.children:
+            raise ValueError(f"Node '{leaf_name}' already exists.")
+
         leaf = Leaf(name=leaf_name, data=data)
         current.add_child(leaf)
         return leaf
