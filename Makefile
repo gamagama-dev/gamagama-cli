@@ -18,7 +18,8 @@ help:
 # This rule depends on the virtual environment's Python executable existing.
 # If it doesn't, make will run the rule to create it first.
 install: $(VENV_PYTHON)
-	$(VENV_PYTHON) -m pip install -e '.[test]'
+	@echo "Installing project in editable mode with test dependencies..."
+	@$(VENV_PYTHON) -m pip install -e '.[test]'
 
 # This rule runs pytest using the virtual environment's interpreter.
 test: $(VENV_PYTHON)
@@ -38,4 +39,9 @@ clean: uninstall
 # This is a helper rule that creates the virtual environment if it's missing.
 # The 'install' and 'test' rules depend on its target file.
 $(VENV_PYTHON):
-	python3 -m venv --upgrade-deps $(VENV_DIR) < /dev/null
+	@echo "Creating virtual environment in $(VENV_DIR) and upgrading dependencies..."
+	@echo "This may take a few moments. Please be patient."
+	@python3 -m venv --upgrade-deps $(VENV_DIR) < /dev/null
+	@echo "Virtual environment created."
+	@echo "To activate it, run: source $(VENV_DIR)/bin/activate"
+	@echo "To deactivate it, run: deactivate"
