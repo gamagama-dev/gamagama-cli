@@ -3,6 +3,7 @@ import shlex
 import sys
 
 from . import commands
+from .commands.base import NoHelpArgumentParser
 
 
 def run():
@@ -10,7 +11,9 @@ def run():
     parser = argparse.ArgumentParser(
         prog="gg", description="A Game Master Game Manager for tabletop RPGs."
     )
-    subparsers = parser.add_subparsers(title="Commands", dest="command_name")
+    subparsers = parser.add_subparsers(
+        title="Commands", dest="command_name", parser_class=NoHelpArgumentParser
+    )
 
     commands.discover_and_register_commands(parser, subparsers)
 
