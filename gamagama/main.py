@@ -31,8 +31,6 @@ def run():
     while True:
         try:
             line = input("gg> ")
-            if line.lower() == "quit":
-                break
             if not line.strip():
                 continue
 
@@ -40,7 +38,8 @@ def run():
             try:
                 args = parser.parse_args(command_parts)
                 if hasattr(args, "func"):
-                    args.func(args)
+                    if args.func(args) is False:
+                        break
                 else:
                     # User entered a command name without required arguments
                     if args.command_name:
