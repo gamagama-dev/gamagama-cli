@@ -2,8 +2,17 @@
 VENV_DIR := .venv
 VENV_PYTHON := $(VENV_DIR)/bin/python
 
+# Set the default goal to 'help'
+.DEFAULT_GOAL := help
+
 # Phony targets are rules that don't represent files.
-.PHONY: install uninstall test
+.PHONY: help install uninstall test
+
+help:
+	@echo "Available commands:"
+	@echo "  install    - Create a virtual environment and install the project in editable mode."
+	@echo "  test       - Run tests using pytest."
+	@echo "  uninstall  - Remove the virtual environment and cached files."
 
 # This rule depends on the virtual environment's Python executable existing.
 # If it doesn't, make will run the rule to create it first.
