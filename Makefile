@@ -23,4 +23,4 @@ uninstall:
 # This is a helper rule that creates the virtual environment if it's missing.
 # The 'install' and 'test' rules depend on its target file.
 $(VENV_PYTHON):
-	@python3 -m venv $(VENV_DIR)
+	@python3 -m venv --upgrade-deps $(VENV_DIR)
