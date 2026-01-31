@@ -3,3 +3,13 @@
 `gamagama` (Game Master Game Manager) is a tool to be used by a Game Master to help run a tabletop RPG. It focuses on the Role Master Unified (RMU) game system.
 
 The core of this repo will be a command-line tool called `gamagama`, or `gg` for short. This tool can be invoked in a interactive "chat" session, to be run "live" while the Game Master (GM) is running a tabletop or online role-playing game.
+
+## Installation
+
+To install the project for development, run the following command from the root directory of the repository:
+
+```bash
+python3 -m pip install -e .
+```
+
+This performs an "editable" install, which means that any changes you make to the source code will be immediately available when you run the tool, without needing to reinstall. It also creates the `gamagama` and `gg` command-line scripts and makes them available in your shell's path.
