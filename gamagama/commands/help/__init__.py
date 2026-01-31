@@ -21,11 +21,9 @@ class HelpCommand(CommandBase):
                 subparser = self.subparsers.choices[args.command_name]
                 if getattr(args, "_interactive", False):
                     help_text = subparser.format_help()
-                    # To avoid modifying the shared parser state, we get the help text
-                    # as a string and replace the usage line's program name.
-                    usage_line = f"usage: {subparser.prog}"
-                    interactive_usage_line = f"usage: {args.command_name}"
-                    print(help_text.replace(usage_line, interactive_usage_line, 1))
+                    # Remove the program name (e.g. "gg ") from usage and examples
+                    # so it looks native to the interactive shell.
+                    print(help_text.replace(f"{self.parser.prog} ", ""))
                 else:
                     subparser.print_help()
             else:
