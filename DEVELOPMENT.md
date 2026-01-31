@@ -4,13 +4,28 @@ This document provides instructions for setting up a development environment to 
 
 ## Setup
 
-1.  **Install in Editable Mode**: To install the project for development, run the following command from the root directory of the repository. This allows you to edit the source code and have the changes immediately reflected in your installed version.
+It is highly recommended to use a Python virtual environment to isolate project dependencies.
+
+1.  **Create a Virtual Environment**: From the root directory, create a new virtual environment. A common convention is to name it `.venv`.
 
     ```bash
-    python3 -m pip install -e .
+    python3 -m venv .venv
     ```
 
-2.  **Install Test Dependencies**: The project uses `pytest` for testing. To install it, run:
+2.  **Activate the Virtual Environment**: Before installing dependencies, you must activate the environment.
+
+    *   On macOS and Linux:
+        ```bash
+        source .venv/bin/activate
+        ```
+    *   On Windows (PowerShell):
+        ```powershell
+        .venv\Scripts\Activate.ps1
+        ```
+
+    Your shell prompt should change to indicate that you are in the active environment.
+
+3.  **Install Dependencies**: With the virtual environment active, install the project in "editable" mode along with its test dependencies using a single command:
 
     ```bash
     python3 -m pip install -e '.[test]'
