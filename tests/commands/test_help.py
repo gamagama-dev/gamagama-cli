@@ -1,33 +1,5 @@
 import argparse
-import pytest
-from gamagama.commands import discover_and_register_commands
 from gamagama.commands.help import HelpCommand
-from gamagama.commands.quit import QuitCommand
-from gamagama.commands.roll import RollCommand
-
-
-@pytest.fixture
-def parser_and_subparsers():
-    """Returns a parser with all commands registered and its subparsers action."""
-    parser = argparse.ArgumentParser(prog="gg")
-    subparsers = parser.add_subparsers(title="Commands")
-    discover_and_register_commands(parser, subparsers)
-    return parser, subparsers
-
-
-def test_roll_command_handler(capsys):
-    """Tests the output of the RollCommand handler."""
-    cmd = RollCommand(None, None)
-    args = argparse.Namespace(dice_spec=["3d6", "+", "1"])
-    cmd.handle(args)
-    captured = capsys.readouterr()
-    assert captured.out == "--> Rolling dice with spec: 3d6 + 1\n"
-
-
-def test_quit_command_handler():
-    """Tests the return value of the QuitCommand handler."""
-    cmd = QuitCommand(None, None)
-    assert cmd.handle(None) is False
 
 
 def test_help_command_list_output(parser_and_subparsers, capsys):
