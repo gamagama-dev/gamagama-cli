@@ -3,10 +3,10 @@ def handle_roll(args):
     print(f"--> Rolling dice with spec: {' '.join(args.dice_spec)}")
 
 
-def register(subparsers):
+def register(parser, subparsers):
     """Registers the 'roll' command and its arguments."""
-    parser = subparsers.add_parser("roll", help="Roll dice based on a specification.")
-    parser.add_argument(
+    roll_parser = subparsers.add_parser("roll", help="Roll dice based on a specification.")
+    roll_parser.add_argument(
         "dice_spec", nargs="+", help="The dice specification (e.g., 3d6)."
     )
-    parser.set_defaults(func=handle_roll)
+    roll_parser.set_defaults(func=handle_roll)

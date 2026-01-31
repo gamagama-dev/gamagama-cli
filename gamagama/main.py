@@ -12,7 +12,7 @@ def run():
     )
     subparsers = parser.add_subparsers(title="Commands", dest="command_name")
 
-    commands.discover_and_register_commands(subparsers)
+    commands.discover_and_register_commands(parser, subparsers)
 
     # If command-line arguments are given, run in CLI mode and exit.
     cli_args = sys.argv[1:]
