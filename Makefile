@@ -6,13 +6,14 @@ VENV_PYTHON := $(VENV_DIR)/bin/python
 .DEFAULT_GOAL := help
 
 # Phony targets are rules that don't represent files.
-.PHONY: help install uninstall test
+.PHONY: help install uninstall test clean
 
 help:
 	@echo "Available commands:"
 	@echo "  install    - Create a virtual environment and install the project in editable mode."
 	@echo "  test       - Run tests using pytest."
 	@echo "  uninstall  - Remove the virtual environment and cached files."
+	@echo "  clean      - Remove all build artifacts, caches, and the virtual environment."
 
 # This rule depends on the virtual environment's Python executable existing.
 # If it doesn't, make will run the rule to create it first.
@@ -28,6 +29,11 @@ uninstall:
 	@rm -rf $(VENV_DIR)
 	@find . -type d -name "__pycache__" -exec rm -r {} +
 	@find . -type d -name ".pytest_cache" -exec rm -r {} +
+
+# This rule cleans everything that 'uninstall' does, plus build artifacts.
+clean: uninstall
+	@rm -rf build/
+	@find . -type d -name "*.egg-info" -exec rm -r {} +
 
 # This is a helper rule that creates the virtual environment if it's missing.
 # The 'install' and 'test' rules depend on its target file.
