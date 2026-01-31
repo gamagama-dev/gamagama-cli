@@ -4,16 +4,14 @@ This document provides instructions for setting up a development environment to 
 
 ## Setup
 
-It is highly recommended to use a Python virtual environment to isolate project dependencies.
+This project uses a local Python virtual environment managed via the `Makefile`.
 
-1.  **Create a Virtual Environment**: From the root directory, create a new virtual environment. A common convention is to name it `.venv`.
-
+1.  **Install Dependencies**: Run the following command. It will create a virtual environment in `.venv/` if one does not exist, and then install the project and its test dependencies into it.
     ```bash
-    python3 -m venv .venv
+    make install
     ```
 
-2.  **Activate the Virtual Environment**: Before installing dependencies, you must activate the environment.
-
+2.  **Activate the Virtual Environment**: To use the tools installed in the virtual environment (like `gg` and `pytest`) directly from your shell, you must activate it.
     *   On macOS and Linux:
         ```bash
         source .venv/bin/activate
@@ -22,19 +20,16 @@ It is highly recommended to use a Python virtual environment to isolate project 
         ```powershell
         .venv\Scripts\Activate.ps1
         ```
-
-    Your shell prompt should change to indicate that you are in the active environment.
-
-3.  **Install Dependencies**: With the virtual environment active, install the project in "editable" mode along with its test dependencies using a single command:
-
-    ```bash
-    python3 -m pip install -e '.[test]'
-    ```
+    Your shell prompt should change to indicate that the environment is active.
 
 ## Running Tests
 
-After setting up the environment, you can run the entire test suite with this command:
+You can run the test suite using the `make` command, which will automatically use the correct virtual environment:
+```bash
+make test
+```
 
+Alternatively, after activating the virtual environment (see step 2 above), you can run `pytest` directly:
 ```bash
 pytest
 ```
