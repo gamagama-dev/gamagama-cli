@@ -6,8 +6,8 @@ readme = "README.md"
 requires-python = ">=3.8"
 
 [project.scripts]
-gamagama = "gamagama.main:run"
-gg = "gamagama.main:run"
+gamagama = "gamagama.core.main:run"
+gg = "gamagama.core.main:run"
 
 [project.optional-dependencies]
 test = [
