@@ -22,18 +22,15 @@ class RollCommand(CommandBase):
 
     MODS (Optional):
       !      Exploding Die: On a max roll, re-roll and add. (e.g. 6 on a d6).
-      o      RM-style Open-Ended (d100 only):
-               96-100: re-roll and add d100oh.
-               01-05: re-roll and subtract d100ol.
-      oh     Open-Ended High only (d100 only): 96-100.
-      ol     Open-Ended Low only (d100 only): 01-05.
+      *      Open-Ended Die: Re-roll on high/low results. The ranges are
+             die-specific (e.g., for a d100, add on 96-100, subtract on 1-5).
 
     EXAMPLES:
       gg roll 3d6         # Rolls three 6-sided dice and sums the result.
       gg roll d20!+5      # Rolls one exploding d20 and adds 5.
-      gg roll d100o       # Rolls a standard RM open-ended d100.
+      gg roll d100*       # Rolls a standard RM open-ended d100.
       gg roll 3(d6+1)     # Rolls a d6, adds 1, repeats 3 times, and sums.
-      gg roll 1d100o+15 2d6 # Performs two separate rolls.
+      gg roll 1d100*+15 2d6 # Performs two separate rolls.
     """
 
     def register(self):
