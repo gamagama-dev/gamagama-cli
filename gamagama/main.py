@@ -1,5 +1,13 @@
+import argparse
+
+
 def run():
     """Main entry point for the gamagama CLI."""
+    parser = argparse.ArgumentParser(
+        description="A Game Master Game Manager for tabletop RPGs."
+    )
+    parser.parse_args()
+
     print("Welcome to gamagama!")
     print("Type 'quit' to exit.")
 

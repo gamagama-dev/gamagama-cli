@@ -26,6 +26,22 @@ python3 -m pip install .
 
 Both installation methods create the `gamagama` and `gg` command-line scripts and makes them available in your shell's path.
 
+## Usage
+
+After installation, you can run the tool using either `gamagama` or `gg`.
+
+To see available options, use the `--help` flag:
+
+```bash
+gg --help
+```
+
+To start an interactive session, run the command without any arguments:
+
+```bash
+gg
+```
+
 ## Uninstallation
 
 To uninstall the project, run:
