@@ -2,19 +2,28 @@ from ..base import CommandBase
 
 
 class HelpCommand(CommandBase):
-    """Shows a list of all available commands."""
+    """Shows a list of all available commands or help for a specific command."""
 
     def register(self):
         """Registers the 'help' command."""
         help_parser = self.subparsers.add_parser(
-            "help", help="Shows a list of all available commands."
+            "help", help="Shows help for a specific command."
+        )
+        help_parser.add_argument(
+            "command_name", nargs="?", help="The command to get help for."
         )
         help_parser.set_defaults(func=self.handle)
 
     def handle(self, args):
-        """Prints a formatted list of all registered commands and their help text."""
-        print("Available commands:")
+        """Prints help for a specific command or a list of all commands."""
+        if args.command_name:
+            if args.command_name in self.subparsers.choices:
+                self.subparsers.choices[args.command_name].print_help()
+            else:
+                print(f"Unknown command: '{args.command_name}'")
+            return
 
+        print("Available commands:")
         commands = [action for action in self.subparsers._choices_actions]
         if not commands:
             return
