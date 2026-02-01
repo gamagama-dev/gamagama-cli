@@ -23,7 +23,12 @@ def discover_commands(tree):
                     command_instance.tree = tree
 
                 # CommandSpec is now a Node, so we initialize it with a name
-                spec = CommandSpec(name=command_instance.name, handler=command_instance.handle, help=command_instance.help)
+                spec = CommandSpec(
+                    name=command_instance.name,
+                    handler=command_instance.handle,
+                    help=command_instance.help,
+                    description=command_instance.description or command_instance.help
+                )
                 command_instance.setup(spec)
 
                 # Register using the command's defined path

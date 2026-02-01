@@ -1,3 +1,4 @@
+import argparse
 from ..tree import MapBranch, NodeVisitor
 from .node import CommandSpec
 
@@ -46,7 +47,12 @@ class ArgparseBuilder(NodeVisitor):
 
     def visit_CommandSpec(self, node: CommandSpec):
         parent_action = self._get_parent_action(node)
-        cmd_parser = parent_action.add_parser(node.name, help=node.help)
+        cmd_parser = parent_action.add_parser(
+            node.name,
+            help=node.help,
+            description=node.description,
+            formatter_class=argparse.RawDescriptionHelpFormatter
+        )
         for arg in node.arguments:
             cmd_parser.add_argument(*arg['args'], **arg['kwargs'])
         cmd_parser.set_defaults(func=node.handler)

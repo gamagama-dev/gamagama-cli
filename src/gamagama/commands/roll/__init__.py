@@ -9,6 +9,18 @@ class RollCommand(CommandBase):
 
     name = "roll"
     help = "Rolls dice based on one or more specifications."
+    description = """
+Rolls dice based on one or more specifications.
+
+Syntax: [count]d[sides][modifier]
+
+Examples:
+  3d6      - Roll 3 six-sided dice
+  d20      - Roll 1 twenty-sided die
+  1d20+5   - Roll 1d20 and add 5
+  2d8-2    - Roll 2d8 and subtract 2
+  d%       - Roll a percentile die (1-100)
+"""
 
     def setup(self, spec):
         spec.add_argument(

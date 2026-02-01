@@ -22,7 +22,9 @@ class HelpPrinterVisitor(NodeVisitor):
 
     def visit_CommandSpec(self, node):
         print(f"Help for '{self.path_str}':")
-        print(f"  {node.help}")
+        text = node.description if node.description else node.help
+        for line in text.strip().splitlines():
+            print(f"  {line}")
 
     def visit_MapBranch(self, node):
         header = f"Available commands in '{node.name}':" if node.name != "root" else "Available commands:"

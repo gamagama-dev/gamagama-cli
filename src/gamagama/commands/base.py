@@ -8,6 +8,7 @@ class CommandBase(ABC):
 
     name: str = ""
     help: str = ""
+    description: str = ""
     path: List[str] = []
 
     @abstractmethod
