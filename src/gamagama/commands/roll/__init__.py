@@ -21,6 +21,7 @@ Examples:
   1d20+5   - Roll 1d20 and add 5
   2d8-2    - Roll 2d8 and subtract 2
   d%       - Roll a percentile die (1-100)
+  d%!      - Rolemaster Open-Ended (Explodes up on 96-100, down on 1-5)
 """
 
     def setup(self, spec):
@@ -56,14 +57,54 @@ Examples:
 
         rolls = []
         for _ in range(num_dice):
-            die_total = 0
-            while True:
-                roll = random.randint(1, sides)
-                die_total += roll
-                if not should_explode or roll != sides:
-                    break
-            rolls.append(die_total)
+            if sides == 100 and should_explode:
+                rolls.append(self._roll_rolemaster_die())
+            else:
+                rolls.append(self._roll_standard_die(sides, should_explode))
 
         total = sum(rolls) + modifier
 
         return f"{spec}: {total} {rolls}"
+
+    def _roll_standard_die(self, sides, should_explode):
+        """Standard die roll with optional max-value explosion."""
+        die_total = 0
+        while True:
+            roll = random.randint(1, sides)
+            die_total += roll
+            if not should_explode or roll != sides:
+                break
+        return die_total
+
+    def _roll_rolemaster_die(self):
+        """
+        Rolemaster Open-Ended Logic:
+        - 96-100: Roll again and add (recursive).
+        - 01-05: Roll again and subtract (the subtraction itself explodes up).
+        """
+        first_roll = random.randint(1, 100)
+
+        if first_roll >= 96:
+            # Explode Up
+            current_total = first_roll
+            last_roll = first_roll
+            while last_roll >= 96:
+                last_roll = random.randint(1, 100)
+                current_total += last_roll
+            return current_total
+
+        elif first_roll <= 5:
+            # Explode Down
+            # We generate the value to subtract. This value behaves like a 
+            # high open-ended roll (if it's >= 96, it keeps growing).
+            subtract_total = 0
+            last_sub_roll = 100  # Force entry into loop
+            
+            while last_sub_roll >= 96:
+                last_sub_roll = random.randint(1, 100)
+                subtract_total += last_sub_roll
+            
+            return first_roll - subtract_total
+
+        else:
+            return first_roll
