@@ -1,8 +1,0 @@
-
-This will launch the interactive shell.
-
-## First Steps
-
-1.  **Explore**: Type `help` to see available commands.
-2.  **Navigate**: Use `cd` (or just the name of a node) to move around.
-3.  **Roll Dice**: Try `roll 1d20` to make a check.
