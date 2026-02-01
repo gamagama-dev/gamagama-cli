@@ -6,15 +6,16 @@ VENV_PYTHON := $(VENV_DIR)/bin/python
 .DEFAULT_GOAL := help
 
 # Phony targets are rules that don't represent files.
-.PHONY: help install uninstall test clean docs
+.PHONY: help install uninstall test clean docs build-docs
 
 help:
 	@echo "Available commands:"
-	@echo "  install    - Create a virtual environment and install the project in editable mode."
-	@echo "  test       - Run tests using pytest."
-	@echo "  docs       - Install doc dependencies and serve the documentation locally."
-	@echo "  uninstall  - Remove the virtual environment and cached files."
-	@echo "  clean      - Remove all build artifacts, caches, and the virtual environment."
+	@echo "  install     - Create a virtual environment and install the project in editable mode."
+	@echo "  test        - Run tests using pytest."
+	@echo "  docs        - Install doc dependencies and serve the documentation locally."
+	@echo "  build-docs  - Install doc dependencies and build static HTML documentation."
+	@echo "  uninstall   - Remove the virtual environment and cached files."
+	@echo "  clean       - Remove all build artifacts, caches, and the virtual environment."
 
 # This rule depends on the virtual environment's Python executable existing.
 # If it doesn't, make will run the rule to create it first.
@@ -34,6 +35,13 @@ docs: $(VENV_PYTHON)
 	@$(VENV_PYTHON) -m pip install -e '.[docs]'
 	@echo "Serving documentation at http://127.0.0.1:8000"
 	@$(VENV_PYTHON) -m mkdocs serve
+
+# Build the static HTML documentation without serving it
+build-docs: $(VENV_PYTHON)
+	@echo "Building documentation..."
+	@$(VENV_PYTHON) -m pip install -e '.[docs]'
+	@$(VENV_PYTHON) -m mkdocs build
+	@echo "Build complete. Open site/index.html to view."
 
 # This rule removes the virtual environment and cached files.
 uninstall:
