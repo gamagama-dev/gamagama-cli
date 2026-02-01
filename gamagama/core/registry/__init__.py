@@ -1,3 +1,3 @@
-from .node import Node, CommandNode, GroupNode
+from .node import CommandSpec
 from .tree import CommandTree
 from .builder import ArgparseBuilder
