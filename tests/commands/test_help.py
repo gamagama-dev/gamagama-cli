@@ -22,7 +22,7 @@ def test_help_command_specific_output(parser_and_tree, capsys):
     parser, tree = parser_and_tree
     cmd = HelpCommand()
     cmd.tree = tree
-    args = argparse.Namespace(command_name="roll", _interactive=False)
+    args = argparse.Namespace(command_name=["roll"], _interactive=False)
     cmd.handle(args)
     captured = capsys.readouterr()
     assert "Help for 'roll':" in captured.out
@@ -34,7 +34,7 @@ def test_help_command_specific_interactive_output(parser_and_tree, capsys):
     parser, tree = parser_and_tree
     cmd = HelpCommand()
     cmd.tree = tree
-    args = argparse.Namespace(command_name="roll", _interactive=True)
+    args = argparse.Namespace(command_name=["roll"], _interactive=True)
     cmd.handle(args)
     captured = capsys.readouterr()
     assert "Help for 'roll':" in captured.out
