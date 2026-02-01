@@ -52,6 +52,7 @@ uninstall:
 # This rule cleans everything that 'uninstall' does, plus build artifacts.
 clean: uninstall
 	rm -rf build/
+	rm -rf site/
 	find . -type d -name "*.egg-info" -exec rm -r {} +
 
 # This is a helper rule that creates the virtual environment if it's missing.
