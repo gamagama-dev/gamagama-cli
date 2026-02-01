@@ -35,9 +35,13 @@ class Tree:
 
         # Create and attach the final Leaf
         leaf_name = path[-1]
-        
+
+        # Ensure the final container is a MapBranch
+        if not isinstance(current, MapBranch):
+             raise ValueError(f"Cannot insert '{leaf_name}': current node is not a MapBranch.")
+
         # Check for existence if we are in a MapBranch
-        if isinstance(current, MapBranch) and leaf_name in current.children:
+        if leaf_name in current.children:
              raise ValueError(f"Node '{leaf_name}' already exists.")
 
         leaf = Leaf(name=leaf_name, data=data)
