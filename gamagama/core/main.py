@@ -34,9 +34,7 @@ def run():
         return
 
     # Otherwise, start interactive mode.
-    # TODO: Update Completer to use tree. For now, extract names from tree root.
-    command_names = list(tree.root.children.keys())
-    completer = Completer(command_names)
+    completer = Completer(tree)
     readline.set_completer(completer.complete)
     readline.parse_and_bind("tab: complete")
 
