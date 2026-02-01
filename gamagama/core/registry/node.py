@@ -1,13 +1,10 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Optional, Callable
+from ..tree.node import Node, MapBranch
 
 
-@dataclass
-class Node:
-    name: str
-    help: str
-    parent: Optional['Node'] = None
-
+# We alias Node here just to keep imports clean in other files if they use registry.node
+# But GroupNode now inherits from MapBranch to get the dictionary behavior.
 
 @dataclass
 class CommandNode(Node):
@@ -21,10 +18,7 @@ class CommandNode(Node):
 
 
 @dataclass
-class GroupNode(Node):
+class GroupNode(MapBranch):
     """Represents a container (e.g., 'player')."""
-    children: Dict[str, Node] = field(default_factory=dict)
-
-    def add_child(self, node: Node):
-        self.children[node.name] = node
-        node.parent = self
+    # MapBranch already defines 'children' and 'add_child'
+    pass

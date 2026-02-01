@@ -1,5 +1,5 @@
 import pytest
-from gamagama.core.tree import Tree, Branch, Leaf
+from gamagama.core.tree import Tree, MapBranch, SeqBranch, Leaf, Branch
 
 
 def test_tree_insert_flat():
@@ -28,11 +28,11 @@ def test_tree_insert_deep():
     root = tree.root
     assert "player" in root.children
     player_node = root.children["player"]
-    assert isinstance(player_node, Branch)
+    assert isinstance(player_node, MapBranch)
 
     assert "inventory" in player_node.children
     inv_node = player_node.children["inventory"]
-    assert isinstance(inv_node, Branch)
+    assert isinstance(inv_node, MapBranch)
 
     assert "add" in inv_node.children
     assert inv_node.children["add"] == leaf
@@ -46,7 +46,7 @@ def test_tree_branching():
     tree.insert(["player", "delete"], "delete_fn")
 
     player_node = tree.get(["player"])
-    assert isinstance(player_node, Branch)
+    assert isinstance(player_node, MapBranch)
     assert len(player_node.children) == 3
     assert set(player_node.children.keys()) == {"create", "list", "delete"}
 
@@ -102,9 +102,77 @@ def test_prevent_node_reuse_join():
     leaf = tree.insert(["a"], "data")
 
     # Manually create a second branch attached to root
-    branch_b = Branch(name="b")
+    branch_b = MapBranch(name="b")
     tree.root.add_child(branch_b)
 
     # Try to add the existing leaf to branch_b
     with pytest.raises(ValueError, match="already has a parent"):
         branch_b.add_child(leaf)
+
+
+def test_seq_branch():
+    """Test SeqBranch behavior (ordered children, duplicates allowed)."""
+    seq = SeqBranch(name="sequence")
+    
+    leaf1 = Leaf(name="item", data=1)
+    leaf2 = Leaf(name="item", data=2)
+    
+    seq.add_child(leaf1)
+    seq.add_child(leaf2)
+    
+    assert len(seq.children) == 2
+    assert seq.children[0] == leaf1
+    assert seq.children[1] == leaf2
+    
+    # Iteration check
+    items = list(seq)
+    assert items == [leaf1, leaf2]
+
+
+def test_walk():
+    """Test the walk method traverses the tree correctly."""
+    tree = Tree()
+    # Structure:
+    # root
+    #  |- a (Leaf)
+    #  |- b (MapBranch)
+    #      |- c (Leaf)
+    
+    tree.insert(["a"], "data_a")
+    tree.insert(["b", "c"], "data_c")
+    
+    nodes = list(tree.walk())
+    names = [n.name for n in nodes]
+    
+    # Order: root -> a -> b -> c (assuming insertion order is preserved)
+    assert names == ["root", "a", "b", "c"]
+
+
+def test_walk_polymorphic():
+    """Test walking a tree containing both MapBranch and SeqBranch."""
+    # root (Map)
+    #  |- expr (Seq)
+    #      |- 1 (Leaf)
+    #      |- + (Leaf)
+    #      |- 2 (Leaf)
+    
+    root = MapBranch(name="root")
+    expr = SeqBranch(name="expr")
+    root.add_child(expr)
+    
+    l1 = Leaf(name="1")
+    op = Leaf(name="+")
+    l2 = Leaf(name="2")
+    
+    expr.add_child(l1)
+    expr.add_child(op)
+    expr.add_child(l2)
+    
+    # Manually construct tree wrapper to use walk
+    tree = Tree()
+    tree.root = root
+    
+    nodes = list(tree.walk())
+    names = [n.name for n in nodes]
+    
+    assert names == ["root", "expr", "1", "+", "2"]
