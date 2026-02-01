@@ -94,3 +94,17 @@ def test_prevent_overwrite_branch():
     # Try to overwrite 'player' with a Leaf
     with pytest.raises(ValueError, match="Node 'player' already exists"):
         tree.insert(["player"], "player_fn")
+
+
+def test_prevent_node_reuse_join():
+    """Test that a node cannot be added to multiple branches (no joins)."""
+    tree = Tree()
+    leaf = tree.insert(["a"], "data")
+
+    # Manually create a second branch attached to root
+    branch_b = Branch(name="b")
+    tree.root.add_child(branch_b)
+
+    # Try to add the existing leaf to branch_b
+    with pytest.raises(ValueError, match="already has a parent"):
+        branch_b.add_child(leaf)

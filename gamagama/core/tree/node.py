@@ -15,6 +15,8 @@ class Branch(Node):
     children: Dict[str, Node] = field(default_factory=dict)
 
     def add_child(self, node: Node):
+        if node.parent is not None:
+            raise ValueError(f"Node '{node.name}' already has a parent: '{node.parent.name}'.")
         self.children[node.name] = node
         node.parent = self
 
