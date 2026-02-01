@@ -6,13 +6,13 @@ VENV_PYTHON := $(VENV_DIR)/bin/python
 .DEFAULT_GOAL := help
 
 # Phony targets are rules that don't represent files.
-.PHONY: help install uninstall test clean docs build-docs
+.PHONY: help install uninstall test clean serve-docs build-docs
 
 help:
 	@echo "Available commands:"
 	@echo "  install     - Create a virtual environment and install the project in editable mode."
 	@echo "  test        - Run tests using pytest."
-	@echo "  docs        - Install doc dependencies and serve the documentation locally."
+	@echo "  serve-docs  - Install doc dependencies and serve the documentation locally."
 	@echo "  build-docs  - Install doc dependencies and build static HTML documentation."
 	@echo "  uninstall   - Remove the virtual environment and cached files."
 	@echo "  clean       - Remove all build artifacts, caches, and the virtual environment."
@@ -30,7 +30,7 @@ test: install
 	$(VENV_PYTHON) -m pytest
 
 # Install documentation dependencies and serve the site
-docs: $(VENV_PYTHON)
+serve-docs: $(VENV_PYTHON)
 	@echo "Installing documentation dependencies..."
 	@$(VENV_PYTHON) -m pip install -e '.[docs]'
 	@echo "Serving documentation at http://127.0.0.1:8000"
