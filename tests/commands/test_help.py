@@ -32,7 +32,7 @@ def test_help_command_specific_output(parser_and_tree, capsys):
     assert "Help for 'roll':" in captured.out
     assert "Rolls dice based on one or more specifications." in captured.out
     # Verify detailed description is shown
-    assert "Syntax: [count]d[sides][modifier]" in captured.out
+    assert "Syntax: [count]d[sides][!][modifier]" in captured.out
 
 
 def test_help_command_specific_interactive_output(parser_and_tree, capsys):
@@ -46,7 +46,7 @@ def test_help_command_specific_interactive_output(parser_and_tree, capsys):
     assert "Help for 'roll':" in captured.out
     assert "Rolls dice based on one or more specifications." in captured.out
     # Verify detailed description is shown
-    assert "Syntax: [count]d[sides][modifier]" in captured.out
+    assert "Syntax: [count]d[sides][!][modifier]" in captured.out
 
 
 def test_help_bubbling_lookup(parser_and_tree, capsys):
@@ -72,4 +72,4 @@ def test_help_bubbling_lookup(parser_and_tree, capsys):
     captured = capsys.readouterr()
     assert "Help for 'roll':" in captured.out
     # Verify detailed description is shown
-    assert "Syntax: [count]d[sides][modifier]" in captured.out
+    assert "Syntax: [count]d[sides][!][modifier]" in captured.out
