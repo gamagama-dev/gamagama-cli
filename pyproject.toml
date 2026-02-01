@@ -17,3 +17,7 @@ gg = "gamagama.core.main:run"
 test = [
     "pytest",
 ]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+]

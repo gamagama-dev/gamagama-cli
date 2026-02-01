@@ -1,0 +1,11 @@
+site_name: Gamagama
+site_description: A Game Master Game Manager for tabletop RPGs.
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Core Concepts: concepts.md
+  - Interactive Mode: interactive-mode.md
+  - Commands: commands.md
