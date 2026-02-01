@@ -12,11 +12,12 @@ class RollCommand(CommandBase):
     description = """
 Rolls dice based on one or more specifications.
 
-Syntax: [count]d[sides][modifier]
+Syntax: [count]d[sides][!][modifier]
 
 Examples:
   3d6      - Roll 3 six-sided dice
   d20      - Roll 1 twenty-sided die
+  3d6!     - Roll 3d6, rerolling max values (exploding)
   1d20+5   - Roll 1d20 and add 5
   2d8-2    - Roll 2d8 and subtract 2
   d%       - Roll a percentile die (1-100)
@@ -35,21 +36,34 @@ Examples:
             print(self._roll_dice(spec))
 
     def _roll_dice(self, spec):
-        """Parses a single dice spec (e.g., '3d6+5') and returns the roll result."""
-        match = re.match(r"^(\d*)d(\d+|%)([+-]\d+)?$", spec, re.IGNORECASE)
+        """Parses a single dice spec (e.g., '3d6!+5') and returns the roll result."""
+        match = re.match(r"^(\d*)d(\d+|%)(!?)([+-]\d+)?$", spec, re.IGNORECASE)
         if not match:
             return f"{spec}: Invalid dice specification."
 
-        num_dice_str, sides_str, modifier_str = match.groups()
+        num_dice_str, sides_str, explode_str, modifier_str = match.groups()
 
         num_dice = int(num_dice_str) if num_dice_str else 1
         sides = 100 if sides_str == "%" else int(sides_str)
+        should_explode = bool(explode_str)
         modifier = int(modifier_str) if modifier_str else 0
 
         if sides == 0:
             return f"{spec}: Cannot roll a 0-sided die."
 
-        rolls = [random.randint(1, sides) for _ in range(num_dice)]
+        if sides == 1 and should_explode:
+            return f"{spec}: Cannot explode a 1-sided die (infinite loop)."
+
+        rolls = []
+        for _ in range(num_dice):
+            die_total = 0
+            while True:
+                roll = random.randint(1, sides)
+                die_total += roll
+                if not should_explode or roll != sides:
+                    break
+            rolls.append(die_total)
+
         total = sum(rolls) + modifier
 
         return f"{spec}: {total} {rolls}"
