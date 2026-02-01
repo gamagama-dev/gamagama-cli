@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 from gamagama.core.registry import CommandSpec
 
 
@@ -7,6 +8,7 @@ class CommandBase(ABC):
 
     name: str = ""
     help: str = ""
+    path: List[str] = []
 
     @abstractmethod
     def setup(self, spec: CommandSpec):

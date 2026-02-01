@@ -26,5 +26,6 @@ def discover_commands(tree):
                 spec = CommandSpec(name=command_instance.name, handler=command_instance.handle, help=command_instance.help)
                 command_instance.setup(spec)
 
-                # Register at top level for now.
-                tree.register_command([command_instance.name], spec)
+                # Register using the command's defined path
+                full_path = command_instance.path + [command_instance.name]
+                tree.register_command(full_path, spec)
