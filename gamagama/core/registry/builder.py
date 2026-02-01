@@ -28,7 +28,14 @@ class ArgparseBuilder(NodeVisitor):
 
         if parent_node not in self.node_actions:
             dest_name = f"cmd_{parent_node.name}" if parent_node.name != "root" else "command_name"
-            self.node_actions[parent_node] = parent_parser.add_subparsers(dest=dest_name, required=False)
+            # Set metavar to control help output (e.g. show 'command' instead of {list,of,cmds})
+            metavar_text = "command" if parent_node.name == "root" else "subcommand"
+
+            self.node_actions[parent_node] = parent_parser.add_subparsers(
+                dest=dest_name,
+                required=False,
+                metavar=metavar_text
+            )
         
         return self.node_actions[parent_node]
 
