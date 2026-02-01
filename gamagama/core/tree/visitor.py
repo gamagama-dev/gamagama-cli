@@ -28,6 +28,10 @@ class NodeVisitor:
         """Handle a Leaf."""
         return self.visit_node(node)
 
+    def visit_command_spec(self, node: Any) -> Any:
+        """Handle a CommandSpec (defined in registry)."""
+        return self.visit_node(node)
+
     def visit_node(self, node: 'Node') -> Any:
         """Fallback for unknown node types."""
         return None
