@@ -1,4 +1,4 @@
-from ..tree import MapBranch, Leaf
+from ..tree import MapBranch
 from .node import CommandSpec
 
 
@@ -36,8 +36,8 @@ class ArgparseBuilder:
                 grp_parser = parent_action.add_parser(node.name, help=f"Group {node.name}")
                 node_parsers[node] = grp_parser
 
-            elif isinstance(node, Leaf) and isinstance(node.data, CommandSpec):
-                spec = node.data
+            elif isinstance(node, CommandSpec):
+                spec = node
                 cmd_parser = parent_action.add_parser(node.name, help=spec.help)
                 for arg in spec.arguments:
                     cmd_parser.add_argument(*arg['args'], **arg['kwargs'])

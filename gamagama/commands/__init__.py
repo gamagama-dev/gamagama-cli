@@ -22,7 +22,8 @@ def discover_commands(tree):
                 if hasattr(command_instance, "tree"):
                     command_instance.tree = tree
 
-                spec = CommandSpec(handler=command_instance.handle, help=command_instance.help)
+                # CommandSpec is now a Node, so we initialize it with a name
+                spec = CommandSpec(name=command_instance.name, handler=command_instance.handle, help=command_instance.help)
                 command_instance.setup(spec)
 
                 # Register at top level for now.

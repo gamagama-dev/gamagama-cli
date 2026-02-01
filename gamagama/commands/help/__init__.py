@@ -1,5 +1,5 @@
 from ..base import CommandBase
-from gamagama.core.tree import MapBranch, Leaf
+from gamagama.core.tree import MapBranch
 from gamagama.core.registry import CommandSpec
 
 
@@ -31,8 +31,8 @@ class HelpCommand(CommandBase):
             print(f"Unknown command: '{' '.join(path)}'")
             return
 
-        if isinstance(node, Leaf) and isinstance(node.data, CommandSpec):
-            spec = node.data
+        if isinstance(node, CommandSpec):
+            spec = node
             print(f"Help for '{' '.join(path)}':")
             print(f"  {spec.help}")
         elif isinstance(node, MapBranch):
@@ -50,8 +50,8 @@ class HelpCommand(CommandBase):
 
         commands = []
         for child in branch:
-            if isinstance(child, Leaf) and isinstance(child.data, CommandSpec):
-                commands.append((child.name, child.data.help))
+            if isinstance(child, CommandSpec):
+                commands.append((child.name, child.help))
             elif isinstance(child, MapBranch):
                 commands.append((child.name, f"Group {child.name}"))
 

@@ -12,10 +12,12 @@ class Tree:
         # The default Tree implementation uses a MapBranch (named nodes)
         self.root = MapBranch(name=root_name)
 
-    def insert(self, path: List[str], data: Any) -> Leaf:
+    def insert(self, path: List[str], data: Any) -> Node:
         """
         Inserts data at the specified path, creating MapBranches as needed.
-        Returns the created Leaf.
+        If 'data' is already a Node, it is attached directly.
+        Otherwise, it is wrapped in a Leaf.
+        Returns the inserted Node.
         """
         current = self.root
 
@@ -36,7 +38,7 @@ class Tree:
             if not isinstance(current, Branch):
                 raise ValueError(f"Cannot traverse '{part}': it is a Leaf, not a Branch.")
 
-        # Create and attach the final Leaf
+        # Create and attach the final Node
         leaf_name = path[-1]
 
         # Ensure the final container is a MapBranch
@@ -47,9 +49,14 @@ class Tree:
         if current.get_child(leaf_name):
              raise ValueError(f"Node '{leaf_name}' already exists.")
 
-        leaf = Leaf(name=leaf_name, data=data)
-        current.add_child(leaf)
-        return leaf
+        if isinstance(data, Node):
+            node = data
+            node.name = leaf_name
+        else:
+            node = Leaf(name=leaf_name, data=data)
+
+        current.add_child(node)
+        return node
 
     def get(self, path: List[str]) -> Optional[Node]:
         """Retrieves a Node at the specified path, or None."""

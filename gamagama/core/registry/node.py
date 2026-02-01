@@ -1,9 +1,10 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Callable
+from ..tree.node import Node
 
 
-@dataclass
-class CommandSpec:
+@dataclass(eq=False)
+class CommandSpec(Node):
     """Payload for a command leaf, defining its handler and arguments."""
     handler: Callable = None
     arguments: List[Dict[str, Any]] = field(default_factory=list)
