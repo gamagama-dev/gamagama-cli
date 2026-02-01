@@ -1,5 +1,7 @@
 import argparse
 from gamagama.commands.help import HelpCommand
+from gamagama.core.session import Session
+from gamagama.core.tree import MapBranch
 
 
 def test_help_command_list_output(parser_and_tree, capsys):
@@ -39,3 +41,27 @@ def test_help_command_specific_interactive_output(parser_and_tree, capsys):
     captured = capsys.readouterr()
     assert "Help for 'roll':" in captured.out
     assert "Rolls dice based on one or more specifications." in captured.out
+
+
+def test_help_bubbling_lookup(parser_and_tree, capsys):
+    """Tests that help finds global commands when called from a subcommand context."""
+    _, tree = parser_and_tree
+    
+    # Setup: Create a child branch 'player'
+    player_node = tree.get(["player"])
+    if not player_node:
+        player_node = MapBranch(name="player")
+        tree.root.add_child(player_node)
+
+    session = Session(tree)
+    session.current_node = player_node
+
+    cmd = HelpCommand()
+    cmd.tree = tree
+    
+    # User types 'help roll' while inside 'player'
+    args = argparse.Namespace(command_name=["roll"], _session=session)
+    cmd.handle(args)
+    
+    captured = capsys.readouterr()
+    assert "Help for 'roll':" in captured.out
