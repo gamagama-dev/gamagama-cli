@@ -1,5 +1,5 @@
 import readline
-from gamagama.core.tree import MapBranch
+from gamagama.core.tree import Branch
 
 
 class Completer:
@@ -24,18 +24,21 @@ class Completer:
         # Traverse the tree
         current = self.tree.root
         for part in path:
-            if isinstance(current, MapBranch) and part in current.children:
-                current = current.children[part]
-            else:
-                # Path doesn't exist in tree, no completions
-                return None
-
-        # We can only complete if we are currently at a Branch (Group)
-        if not isinstance(current, MapBranch):
+            if isinstance(current, Branch):
+                child = current.get_child(part)
+                if child:
+                    current = child
+                    continue
+            
+            # Path doesn't exist in tree or cannot be traversed
             return None
 
-        # Find matches
-        options = [name for name in current.children.keys() if name.startswith(text)]
+        # We can only complete if we are currently at a Branch
+        if not isinstance(current, Branch):
+            return None
+
+        # Find matches by iterating over the branch (polymorphic)
+        options = [node.name for node in current if node.name and node.name.startswith(text)]
 
         if state < len(options):
             return options[state]

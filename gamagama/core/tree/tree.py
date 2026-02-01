@@ -22,10 +22,13 @@ class Tree:
         # Navigate or create branches for the path prefix
         for part in path[:-1]:
             if isinstance(current, MapBranch):
-                if part not in current.children:
+                child = current.get_child(part)
+                if not child:
                     new_branch = MapBranch(name=part)
                     current.add_child(new_branch)
-                current = current.children[part]
+                    current = new_branch
+                else:
+                    current = child
             else:
                 # If we encounter a SeqBranch or Leaf while traversing a path, we can't proceed by name
                 raise ValueError(f"Cannot traverse '{part}': current node is not a MapBranch.")
@@ -41,7 +44,7 @@ class Tree:
              raise ValueError(f"Cannot insert '{leaf_name}': current node is not a MapBranch.")
 
         # Check for existence if we are in a MapBranch
-        if leaf_name in current.children:
+        if current.get_child(leaf_name):
              raise ValueError(f"Node '{leaf_name}' already exists.")
 
         leaf = Leaf(name=leaf_name, data=data)
@@ -52,8 +55,10 @@ class Tree:
         """Retrieves a Node at the specified path, or None."""
         current = self.root
         for part in path:
-            if isinstance(current, MapBranch) and part in current.children:
-                current = current.children[part]
+            if isinstance(current, Branch):
+                current = current.get_child(part)
+                if current is None:
+                    return None
             else:
                 return None
         return current

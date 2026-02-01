@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Iterator
+from typing import List, Iterator, Optional
 from .node import Node
 from .branch import Branch
 
@@ -11,6 +11,9 @@ class SeqBranch(Branch):
 
     def _add_child_impl(self, node: Node):
         self.children.append(node)
+
+    def get_child(self, key: str) -> Optional[Node]:
+        return None
 
     def __iter__(self) -> Iterator[Node]:
         return iter(self.children)

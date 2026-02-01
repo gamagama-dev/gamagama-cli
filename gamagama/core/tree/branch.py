@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Iterator
+from typing import Iterator, Optional
 from .node import Node
 
 
@@ -17,6 +17,10 @@ class Branch(Node):
     def _add_child_impl(self, node: Node):
         """Subclasses implement specific storage logic."""
         raise NotImplementedError
+
+    def get_child(self, key: str) -> Optional[Node]:
+        """Retrieves a child node by key, if supported."""
+        return None
 
     def __iter__(self) -> Iterator[Node]:
         """Subclasses must yield children."""
