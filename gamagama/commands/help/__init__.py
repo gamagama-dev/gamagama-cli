@@ -14,29 +14,42 @@ class HelpCommand(CommandBase):
 
     def setup(self, spec):
         spec.add_argument(
-            "command_name", nargs="?", help="The command to get help for."
+            "command_name", nargs="*", help="The command path to get help for."
         )
 
     def handle(self, args):
         """Prints help for a specific command or a list of all commands."""
-        if args.command_name:
-            # Find the node in the tree
-            node = self.tree.get([args.command_name])
+        path = args.command_name if args.command_name else []
 
-            if node and isinstance(node, Leaf) and isinstance(node.data, CommandSpec):
-                spec = node.data
-                print(f"Help for '{args.command_name}':")
-                print(f"  {spec.help}")
-            else:
-                print(f"Unknown command: '{args.command_name}'")
+        if not path:
+            self._print_group_help(self.tree.root)
             return
 
-        print("Available commands:")
-        if not self.tree.root.children:
+        node = self.tree.get(path)
+
+        if not node:
+            print(f"Unknown command: '{' '.join(path)}'")
+            return
+
+        if isinstance(node, Leaf) and isinstance(node.data, CommandSpec):
+            spec = node.data
+            print(f"Help for '{' '.join(path)}':")
+            print(f"  {spec.help}")
+        elif isinstance(node, MapBranch):
+            self._print_group_help(node)
+        else:
+            # Should not happen in standard usage
+            print(f"Node '{' '.join(path)}' is not a command or group.")
+
+    def _print_group_help(self, branch):
+        header = f"Available commands in '{branch.name}':" if branch.name != "root" else "Available commands:"
+        print(header)
+
+        if not branch.children:
             return
 
         commands = []
-        for child in self.tree.root:
+        for child in branch:
             if isinstance(child, Leaf) and isinstance(child.data, CommandSpec):
                 commands.append((child.name, child.data.help))
             elif isinstance(child, MapBranch):
