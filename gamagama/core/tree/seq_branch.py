@@ -4,7 +4,7 @@ from .node import Node
 from .branch import Branch
 
 
-@dataclass
+@dataclass(eq=False)
 class SeqBranch(Branch):
     """A node with ordered children (List). Allows duplicates."""
     children: List[Node] = field(default_factory=list)

@@ -4,7 +4,7 @@ from .node import Node
 from .branch import Branch
 
 
-@dataclass
+@dataclass(eq=False)
 class MapBranch(Branch):
     """A node with named children (Dict). Enforces unique names."""
     children: Dict[str, Node] = field(default_factory=dict)

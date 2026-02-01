@@ -3,7 +3,7 @@ from typing import Any
 from .node import Node
 
 
-@dataclass
+@dataclass(eq=False)
 class Leaf(Node):
     """A terminal node that holds data."""
     data: Any = None

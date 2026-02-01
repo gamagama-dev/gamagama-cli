@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 
-@dataclass
+@dataclass(eq=False)
 class Node:
     """Base class for all nodes in the tree."""
     name: str

@@ -3,7 +3,7 @@ from typing import Iterator
 from .node import Node
 
 
-@dataclass
+@dataclass(eq=False)
 class Branch(Node):
     """Abstract base for nodes that contain children."""
 
