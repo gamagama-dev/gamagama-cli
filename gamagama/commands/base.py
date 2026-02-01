@@ -1,16 +1,16 @@
 from abc import ABC, abstractmethod
+from gamagama.core.registry import CommandSpec
 
 
 class CommandBase(ABC):
     """Base class for all commands."""
 
-    def __init__(self, parser, subparsers):
-        self.parser = parser
-        self.subparsers = subparsers
+    name: str = ""
+    help: str = ""
 
     @abstractmethod
-    def register(self):
-        """Registers the command with its arguments to the subparser."""
+    def setup(self, spec: CommandSpec):
+        """Configures the command arguments on the spec."""
         pass
 
     @abstractmethod

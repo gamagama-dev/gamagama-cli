@@ -1,41 +1,51 @@
 from ..base import CommandBase
+from gamagama.core.tree import MapBranch, Leaf
+from gamagama.core.registry import CommandSpec
 
 
 class HelpCommand(CommandBase):
     """Shows a list of all available commands or help for a specific command."""
 
-    def register(self):
-        """Registers the 'help' command."""
-        help_parser = self.subparsers.add_parser(
-            "help", help="Shows help for a specific command."
-        )
-        help_parser.add_argument(
+    name = "help"
+    help = "Shows help for a specific command."
+
+    def __init__(self):
+        self.tree = None  # Injected by loader
+
+    def setup(self, spec):
+        spec.add_argument(
             "command_name", nargs="?", help="The command to get help for."
         )
-        help_parser.set_defaults(func=self.handle)
 
     def handle(self, args):
         """Prints help for a specific command or a list of all commands."""
         if args.command_name:
-            if args.command_name in self.subparsers.choices:
-                subparser = self.subparsers.choices[args.command_name]
-                if getattr(args, "_interactive", False):
-                    help_text = subparser.format_help()
-                    # Remove the program name (e.g. "gg ") from usage and examples
-                    # so it looks native to the interactive shell.
-                    print(help_text.replace(f"{self.parser.prog} ", ""))
-                else:
-                    subparser.print_help()
+            # Find the node in the tree
+            node = self.tree.get([args.command_name])
+
+            if node and isinstance(node, Leaf) and isinstance(node.data, CommandSpec):
+                spec = node.data
+                print(f"Help for '{args.command_name}':")
+                print(f"  {spec.help}")
             else:
                 print(f"Unknown command: '{args.command_name}'")
             return
 
         print("Available commands:")
-        commands = [action for action in self.subparsers._choices_actions]
+        if not self.tree.root.children:
+            return
+
+        commands = []
+        for child in self.tree.root:
+            if isinstance(child, Leaf) and isinstance(child.data, CommandSpec):
+                commands.append((child.name, child.data.help))
+            elif isinstance(child, MapBranch):
+                commands.append((child.name, f"Group {child.name}"))
+
         if not commands:
             return
 
-        max_len = max(len(cmd.dest) for cmd in commands)
+        max_len = max(len(name) for name, _ in commands)
 
-        for cmd in sorted(commands, key=lambda x: x.dest):
-            print(f"  {cmd.dest:<{max_len + 2}}{cmd.help}")
+        for name, help_text in sorted(commands, key=lambda x: x[0]):
+            print(f"  {name:<{max_len + 2}}{help_text}")

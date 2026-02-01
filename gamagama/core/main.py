@@ -6,6 +6,7 @@ import sys
 from .. import commands
 from .parsers import NoHelpArgumentParser
 from .completer import Completer
+from .registry import CommandTree, ArgparseBuilder
 
 
 def run():
@@ -13,11 +14,14 @@ def run():
     parser = argparse.ArgumentParser(
         prog="gg", description="A Game Master Game Manager for tabletop RPGs."
     )
-    subparsers = parser.add_subparsers(
-        title="Commands", dest="command_name", parser_class=NoHelpArgumentParser
-    )
 
-    commands.discover_and_register_commands(parser, subparsers)
+    # Build the command tree
+    tree = CommandTree()
+    commands.discover_commands(tree)
+
+    # Build argparse structure from tree
+    builder = ArgparseBuilder(tree)
+    builder.build(parser)
 
     # If command-line arguments are given, run in CLI mode and exit.
     cli_args = sys.argv[1:]
@@ -30,7 +34,8 @@ def run():
         return
 
     # Otherwise, start interactive mode.
-    command_names = list(subparsers.choices.keys())
+    # TODO: Update Completer to use tree. For now, extract names from tree root.
+    command_names = list(tree.root.children.keys())
     completer = Completer(command_names)
     readline.set_completer(completer.complete)
     readline.parse_and_bind("tab: complete")
@@ -55,10 +60,7 @@ def run():
                         break
                 else:
                     # User entered a command name without required arguments
-                    if args.command_name:
-                        subparsers.choices[args.command_name].print_help()
-                    else:
-                        parser.print_help()
+                    parser.print_help()
             except SystemExit:
                 # Argparse calls sys.exit() on --help. Catch it to keep the loop running.
                 pass
