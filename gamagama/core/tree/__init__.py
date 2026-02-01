@@ -1,2 +1,6 @@
-from .node import Node, Branch, MapBranch, SeqBranch, Leaf
+from .node import Node
+from .branch import Branch
+from .map_branch import MapBranch
+from .seq_branch import SeqBranch
+from .leaf import Leaf
 from .tree import Tree

@@ -1,5 +1,8 @@
 from typing import List, Any, Optional, Iterator
-from .node import MapBranch, Leaf, Node, Branch
+from .node import Node
+from .branch import Branch
+from .map_branch import MapBranch
+from .leaf import Leaf
 
 
 class Tree:

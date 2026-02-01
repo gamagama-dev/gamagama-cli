@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Optional, Callable
-from ..tree.node import Node, MapBranch
+from ..tree.node import Node
+from ..tree.map_branch import MapBranch
 
 
 # We alias Node here just to keep imports clean in other files if they use registry.node
