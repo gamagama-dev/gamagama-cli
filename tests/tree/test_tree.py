@@ -1,5 +1,6 @@
 import pytest
-from gamagama.core.tree import Tree, MapBranch, SeqBranch, Leaf, Branch
+from dataclasses import dataclass
+from gamagama.core.tree import Tree, MapBranch, SeqBranch, Leaf, Branch, Node, NodeVisitor
 
 
 def test_tree_insert_flat():
@@ -190,3 +191,74 @@ def test_insert_traversal_fails_on_seq_branch():
     # This implies "sequence" maps to a child named "item", which SeqBranch doesn't support.
     with pytest.raises(ValueError, match="current node is not a MapBranch"):
         tree.insert(["sequence", "item"], "data")
+
+
+def test_insert_node_instance():
+    """Test inserting a Node instance directly (not wrapped in Leaf)."""
+    tree = Tree()
+    
+    @dataclass(eq=False)
+    class CustomNode(Node):
+        extra: str = ""
+
+    custom = CustomNode(name="ignored", extra="foo") # name is updated by insert
+    
+    # Insert at ["my", "custom"]
+    inserted = tree.insert(["my", "custom"], custom)
+    
+    assert inserted is custom
+    assert inserted.name == "custom"
+    assert inserted.extra == "foo"
+    assert isinstance(tree.get(["my", "custom"]), CustomNode)
+
+
+def test_get_child_abstraction():
+    """Test the get_child method on different branch types."""
+    # MapBranch supports get_child
+    map_branch = MapBranch(name="map")
+    child = Leaf(name="child")
+    map_branch.add_child(child)
+    
+    assert map_branch.get_child("child") == child
+    assert map_branch.get_child("missing") is None
+    
+    # SeqBranch does not support get_child (returns None)
+    seq_branch = SeqBranch(name="seq")
+    child2 = Leaf(name="child2")
+    seq_branch.add_child(child2)
+    
+    assert seq_branch.get_child("child2") is None
+
+
+def test_visitor_pattern():
+    """Test that the visitor pattern correctly dispatches to node types."""
+    
+    class TestVisitor(NodeVisitor):
+        def __init__(self):
+            self.visited = []
+
+        def visit_map_branch(self, node):
+            self.visited.append(f"map:{node.name}")
+            # Manually traverse children for this test
+            for child in node:
+                self.visit(child)
+
+        def visit_seq_branch(self, node):
+            self.visited.append(f"seq:{node.name}")
+            for child in node:
+                self.visit(child)
+
+        def visit_leaf(self, node):
+            self.visited.append(f"leaf:{node.name}")
+
+    # Build a tree: root(Map) -> seq(Seq) -> item(Leaf)
+    tree = Tree()
+    seq = SeqBranch(name="seq")
+    tree.root.add_child(seq)
+    leaf = Leaf(name="item")
+    seq.add_child(leaf)
+    
+    visitor = TestVisitor()
+    visitor.visit(tree.root)
+    
+    assert visitor.visited == ["map:root", "seq:seq", "leaf:item"]
