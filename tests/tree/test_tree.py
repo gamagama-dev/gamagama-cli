@@ -176,3 +176,17 @@ def test_walk_polymorphic():
     names = [n.name for n in nodes]
     
     assert names == ["root", "expr", "1", "+", "2"]
+
+
+def test_insert_traversal_fails_on_seq_branch():
+    """Test that Tree.insert cannot traverse through a SeqBranch."""
+    tree = Tree()
+
+    # Manually inject a SeqBranch
+    seq = SeqBranch(name="sequence")
+    tree.root.add_child(seq)
+
+    # Try to insert a child *under* the sequence using path notation
+    # This implies "sequence" maps to a child named "item", which SeqBranch doesn't support.
+    with pytest.raises(ValueError, match="current node is not a MapBranch"):
+        tree.insert(["sequence", "item"], "data")
