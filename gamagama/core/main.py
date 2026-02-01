@@ -12,7 +12,9 @@ from .registry import CommandTree, ArgparseBuilder
 def run():
     """Main entry point for the gamagama CLI."""
     parser = argparse.ArgumentParser(
-        prog="gg", description="A Game Master Game Manager for tabletop RPGs."
+        prog="gg",
+        description="A Game Master Game Manager for tabletop RPGs.\nRun without command to enter interactive mode.",
+        formatter_class=argparse.RawDescriptionHelpFormatter
     )
 
     # Build the command tree
