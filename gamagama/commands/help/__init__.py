@@ -1,6 +1,56 @@
 from ..base import CommandBase
-from gamagama.core.tree import MapBranch
+from gamagama.core.tree import NodeVisitor
 from gamagama.core.registry import CommandSpec
+
+
+class HelpDescriptionVisitor(NodeVisitor):
+    """Visitor to extract a one-line description for a node."""
+
+    def visit_CommandSpec(self, node):
+        return node.help
+
+    def visit_MapBranch(self, node):
+        return f"Group {node.name}"
+
+
+class HelpPrinterVisitor(NodeVisitor):
+    """Visitor to print the full help output for a node."""
+
+    def __init__(self, path):
+        self.path = path
+        self.path_str = " ".join(path)
+
+    def visit_CommandSpec(self, node):
+        print(f"Help for '{self.path_str}':")
+        print(f"  {node.help}")
+
+    def visit_MapBranch(self, node):
+        header = f"Available commands in '{node.name}':" if node.name != "root" else "Available commands:"
+        print(header)
+
+        # MapBranch is iterable
+        children = list(node)
+        if not children:
+            return
+
+        commands = []
+        desc_visitor = HelpDescriptionVisitor()
+
+        for child in children:
+            description = desc_visitor.visit(child)
+            if description:
+                commands.append((child.name, description))
+
+        if not commands:
+            return
+
+        max_len = max(len(name) for name, _ in commands)
+
+        for name, help_text in sorted(commands, key=lambda x: x[0]):
+            print(f"  {name:<{max_len + 2}}{help_text}")
+
+    def generic_visit(self, node):
+        print(f"Node '{self.path_str}' is not a command or group.")
 
 
 class HelpCommand(CommandBase):
@@ -21,44 +71,11 @@ class HelpCommand(CommandBase):
         """Prints help for a specific command or a list of all commands."""
         path = args.command_name if args.command_name else []
 
-        if not path:
-            self._print_group_help(self.tree.root)
-            return
-
         node = self.tree.get(path)
 
         if not node:
             print(f"Unknown command: '{' '.join(path)}'")
             return
 
-        if isinstance(node, CommandSpec):
-            spec = node
-            print(f"Help for '{' '.join(path)}':")
-            print(f"  {spec.help}")
-        elif isinstance(node, MapBranch):
-            self._print_group_help(node)
-        else:
-            # Should not happen in standard usage
-            print(f"Node '{' '.join(path)}' is not a command or group.")
-
-    def _print_group_help(self, branch):
-        header = f"Available commands in '{branch.name}':" if branch.name != "root" else "Available commands:"
-        print(header)
-
-        if not branch.children:
-            return
-
-        commands = []
-        for child in branch:
-            if isinstance(child, CommandSpec):
-                commands.append((child.name, child.help))
-            elif isinstance(child, MapBranch):
-                commands.append((child.name, f"Group {child.name}"))
-
-        if not commands:
-            return
-
-        max_len = max(len(name) for name, _ in commands)
-
-        for name, help_text in sorted(commands, key=lambda x: x[0]):
-            print(f"  {name:<{max_len + 2}}{help_text}")
+        visitor = HelpPrinterVisitor(path)
+        visitor.visit(node)
