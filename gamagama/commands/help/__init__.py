@@ -1,5 +1,5 @@
 from ..base import CommandBase
-from gamagama.core.tree import NodeVisitor, MapBranch
+from gamagama.core.tree import NodeVisitor, MapBranch, Branch
 from gamagama.core.registry import CommandSpec
 
 
@@ -69,13 +69,61 @@ class HelpCommand(CommandBase):
 
     def handle(self, args):
         """Prints help for a specific command or a list of all commands."""
+        session = getattr(args, "_session", None)
+        start_node = session.current_node if session else self.tree.root
+        
         path = args.command_name if args.command_name else []
 
-        node = self.tree.get(path)
+        if not path:
+            target_node = start_node
+        else:
+            target_node = self._resolve_target(start_node, path)
 
-        if not node:
+        if not target_node:
             print(f"Unknown command: '{' '.join(path)}'")
             return
 
-        visitor = HelpPrinterVisitor(path)
-        visitor.visit(node)
+        display_path = self._get_node_path(target_node)
+        visitor = HelpPrinterVisitor(display_path)
+        visitor.visit(target_node)
+
+    def _resolve_target(self, start_node, path_parts):
+        first = path_parts[0]
+        rest = path_parts[1:]
+        
+        # 1. Bubbling lookup for the first component
+        curr = start_node
+        found_node = None
+        
+        while curr:
+            if isinstance(curr, Branch):
+                child = curr.get_child(first)
+                if child:
+                    found_node = child
+                    break
+            curr = curr.parent
+            
+        if not found_node:
+            return None
+            
+        # 2. Strict lookup for the rest
+        current = found_node
+        for part in rest:
+            if isinstance(current, Branch):
+                child = current.get_child(part)
+                if child:
+                    current = child
+                else:
+                    return None
+            else:
+                return None
+                
+        return current
+
+    def _get_node_path(self, node):
+        path = []
+        curr = node
+        while curr and curr.name != "root":
+            path.append(curr.name)
+            curr = curr.parent
+        return list(reversed(path))

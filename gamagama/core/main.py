@@ -49,8 +49,7 @@ def run_interactive_mode(tree):
     """Runs the application in stateful interactive mode."""
     session = Session(tree)
     
-    # TODO: Update Completer to be session-aware
-    completer = Completer(tree)
+    completer = Completer(tree, session)
     readline.set_completer(completer.complete)
     readline.parse_and_bind("tab: complete")
 
