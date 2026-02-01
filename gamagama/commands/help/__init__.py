@@ -1,5 +1,5 @@
 from ..base import CommandBase
-from gamagama.core.tree import NodeVisitor
+from gamagama.core.tree import NodeVisitor, MapBranch
 from gamagama.core.registry import CommandSpec
 
 
@@ -10,7 +10,7 @@ class HelpDescriptionVisitor(NodeVisitor):
         return node.help
 
     def visit_MapBranch(self, node):
-        return f"Group {node.name}"
+        return f"{node.name.capitalize()} subcommands"
 
 
 class HelpPrinterVisitor(NodeVisitor):
@@ -27,27 +27,27 @@ class HelpPrinterVisitor(NodeVisitor):
     def visit_MapBranch(self, node):
         header = f"Available commands in '{node.name}':" if node.name != "root" else "Available commands:"
         print(header)
+        self._print_tree(node, indent=2)
 
-        # MapBranch is iterable
-        children = list(node)
+    def _print_tree(self, branch, indent):
+        children = list(branch)
         if not children:
             return
 
-        commands = []
+        # Calculate padding for this specific level
+        max_len = max(len(c.name) for c in children)
         desc_visitor = HelpDescriptionVisitor()
 
-        for child in children:
+        for child in sorted(children, key=lambda x: x.name):
             description = desc_visitor.visit(child)
-            if description:
-                commands.append((child.name, description))
+            prefix = " " * indent
+            
+            # Print the current node (Command or Branch)
+            print(f"{prefix}{child.name:<{max_len + 2}}{description}")
 
-        if not commands:
-            return
-
-        max_len = max(len(name) for name, _ in commands)
-
-        for name, help_text in sorted(commands, key=lambda x: x[0]):
-            print(f"  {name:<{max_len + 2}}{help_text}")
+            # If it's a branch, recurse immediately to show its children
+            if isinstance(child, MapBranch):
+                self._print_tree(child, indent + 2)
 
     def generic_visit(self, node):
         print(f"Node '{self.path_str}' is not a command or group.")
