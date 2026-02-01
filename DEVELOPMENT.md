@@ -24,12 +24,22 @@ This project uses a local Python virtual environment managed via the `Makefile`.
 
 ## Running Tests
 
-You can run the test suite using the `make` command, which will automatically use the correct virtual environment:
+There are two ways to run the test suite.
+
+### 1. Using the Makefile (Recommended for CI/Clean State)
+
+You can run the test suite using the `make` command:
 ```bash
 make test
 ```
+**Why use this?**
+This command automatically ensures that your virtual environment is created and all dependencies are up-to-date before running the tests. It is the safest way to ensure you are testing against the correct environment state.
 
-Alternatively, after activating the virtual environment (see step 2 above), you can run `pytest` directly:
+### 2. Manual Execution (Faster)
+
+If you have already installed dependencies and activated your virtual environment (see Setup step 2), you can run `pytest` directly:
 ```bash
 pytest
 ```
+**Why use this?**
+This is faster than `make test` because it skips the dependency installation check. It is ideal for rapid iteration during development (e.g., TDD cycles).
