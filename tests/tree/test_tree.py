@@ -237,18 +237,18 @@ def test_visitor_pattern():
         def __init__(self):
             self.visited = []
 
-        def visit_map_branch(self, node):
+        def visit_MapBranch(self, node):
             self.visited.append(f"map:{node.name}")
             # Manually traverse children for this test
             for child in node:
                 self.visit(child)
 
-        def visit_seq_branch(self, node):
+        def visit_SeqBranch(self, node):
             self.visited.append(f"seq:{node.name}")
             for child in node:
                 self.visit(child)
 
-        def visit_leaf(self, node):
+        def visit_Leaf(self, node):
             self.visited.append(f"leaf:{node.name}")
 
     # Build a tree: root(Map) -> seq(Seq) -> item(Leaf)

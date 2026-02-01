@@ -18,8 +18,8 @@ class ArgparseBuilder(NodeVisitor):
         for node in self.tree.walk():
             if node is self.tree.root:
                 continue
-            # Dispatch to visit_map_branch or visit_command_spec
-            node.accept(self)
+            # Dispatch using reflection (visit_MapBranch, visit_CommandSpec, etc.)
+            self.visit(node)
 
     def _get_parent_action(self, node):
         """Helper to get or create the subparsers action for the parent node."""
@@ -32,12 +32,12 @@ class ArgparseBuilder(NodeVisitor):
         
         return self.node_actions[parent_node]
 
-    def visit_map_branch(self, node: MapBranch):
+    def visit_MapBranch(self, node: MapBranch):
         parent_action = self._get_parent_action(node)
         grp_parser = parent_action.add_parser(node.name, help=f"Group {node.name}")
         self.node_parsers[node] = grp_parser
 
-    def visit_command_spec(self, node: CommandSpec):
+    def visit_CommandSpec(self, node: CommandSpec):
         parent_action = self._get_parent_action(node)
         cmd_parser = parent_action.add_parser(node.name, help=node.help)
         for arg in node.arguments:

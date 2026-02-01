@@ -1,10 +1,7 @@
 from dataclasses import dataclass, field
-from typing import List, Iterator, Optional, Any, TYPE_CHECKING
+from typing import List, Iterator, Optional
 from .node import Node
 from .branch import Branch
-
-if TYPE_CHECKING:
-    from .visitor import NodeVisitor
 
 
 @dataclass(eq=False)
@@ -20,6 +17,3 @@ class SeqBranch(Branch):
 
     def __iter__(self) -> Iterator[Node]:
         return iter(self.children)
-
-    def accept(self, visitor: 'NodeVisitor') -> Any:
-        return visitor.visit_seq_branch(self)
