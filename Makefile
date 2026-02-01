@@ -22,7 +22,9 @@ install: $(VENV_PYTHON)
 	@$(VENV_PYTHON) -m pip install -e '.[test]'
 
 # This rule runs pytest using the virtual environment's interpreter.
-test: $(VENV_PYTHON)
+# We depend on 'install' to ensure the package is installed in editable mode,
+# which is required for Python to find the package in the 'src' directory.
+test: install
 	$(VENV_PYTHON) -m pytest
 
 # This rule removes the virtual environment and cached files.
@@ -37,7 +39,7 @@ clean: uninstall
 	find . -type d -name "*.egg-info" -exec rm -r {} +
 
 # This is a helper rule that creates the virtual environment if it's missing.
-# The 'install' and 'test' rules depend on its target file.
+# The 'install' rule depends on its target file.
 $(VENV_PYTHON):
 	@echo "Creating virtual environment in $(VENV_DIR) and upgrading dependencies..."
 	@echo "This may take a few moments. Please be patient."
