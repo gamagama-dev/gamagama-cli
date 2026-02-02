@@ -30,7 +30,9 @@ class HelpPrinterVisitor(NodeVisitor):
         if node.dynamic_help and self.session:
             extra_help = node.dynamic_help(self.session)
             if extra_help:
-                print(extra_help)
+                print()
+                for line in extra_help.strip().splitlines():
+                    print(f"  {line}")
 
     def visit_MapBranch(self, node):
         header = f"Available commands in '{node.name}':" if node.name != "root" else "Available commands:"
