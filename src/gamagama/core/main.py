@@ -72,26 +72,46 @@ def run_interactive_mode(tree):
                 continue
 
             parts = shlex.split(line)
-            cmd_name = parts[0]
-            cmd_args = parts[1:]
-
-            # Resolve command
-            node = _resolve_node(session.current_node, cmd_name)
-
-            if not node:
-                print(f"Command not found: {cmd_name}")
+            if not parts:
                 continue
 
-            if isinstance(node, Branch):
+            # 1. Resolve the first part (bubbling lookup)
+            first_node = _resolve_node(session.current_node, parts[0])
+            
+            if not first_node:
+                print(f"Command not found: {parts[0]}")
+                continue
+
+            # 2. Walk down the tree with the remaining parts (strict lookup)
+            curr_node = first_node
+            remaining_args = parts[1:]
+            
+            while remaining_args and isinstance(curr_node, Branch):
+                next_child = curr_node.get_child(remaining_args[0])
+                if next_child:
+                    curr_node = next_child
+                    remaining_args.pop(0)
+                else:
+                    # Next arg is not a child, so stop walking.
+                    break
+            
+            # 3. Execute or Navigate
+            if isinstance(curr_node, Branch):
+                if remaining_args:
+                    # We ended at a branch but still have args that didn't match children.
+                    # e.g. "system invalid_cmd"
+                    print(f"Command not found: {remaining_args[0]}")
+                    continue
+                
                 # Navigation: Enter the branch
-                session.current_node = node
+                session.current_node = curr_node
                 continue
 
-            if isinstance(node, CommandSpec):
-                _execute_command(node, cmd_args, session)
+            if isinstance(curr_node, CommandSpec):
+                _execute_command(curr_node, remaining_args, session)
                 continue
             
-            print(f"Node '{node.name}' is not executable.")
+            print(f"Node '{curr_node.name}' is not executable.")
 
         except (EOFError, KeyboardInterrupt):
             print("\nExiting.")
