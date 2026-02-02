@@ -16,7 +16,13 @@ def run():
     """Main entry point for the gamagama CLI."""
     # 1. Parse global options (like --system) first
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("--system", help="The game system to use (e.g., 'rolemaster', 'generic').")
+    
+    system_choices = sorted(SYSTEMS.keys())
+    parser.add_argument(
+        "--system", 
+        choices=system_choices,
+        help="The game system to use."
+    )
     
     # parse_known_args returns the parsed args and the 'rest' of the list
     args, remaining_args = parser.parse_known_args()
@@ -24,11 +30,7 @@ def run():
     # 2. Determine the System
     system_class = RolemasterSystem  # Default
     if args.system:
-        if args.system in SYSTEMS:
-            system_class = SYSTEMS[args.system]
-        else:
-            print(f"Error: Unknown system '{args.system}'. Available: {', '.join(sorted(SYSTEMS.keys()))}")
-            sys.exit(1)
+        system_class = SYSTEMS[args.system]
 
     # 3. Build the command tree
     tree = CommandTree()
@@ -50,7 +52,12 @@ def run_cli_mode(tree, system_class, cli_args):
     )
     
     # Re-add system arg so it shows in help, even though we handled it
-    parser.add_argument("--system", help="The game system to use.")
+    system_choices = sorted(SYSTEMS.keys())
+    parser.add_argument(
+        "--system", 
+        choices=system_choices,
+        help="The game system to use."
+    )
 
     # Build argparse structure from tree
     builder = ArgparseBuilder(tree)
