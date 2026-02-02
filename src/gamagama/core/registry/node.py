@@ -10,6 +10,7 @@ class CommandSpec(Node):
     arguments: List[Dict[str, Any]] = field(default_factory=list)
     help: str = ""
     description: str = ""
+    dynamic_help: Callable = None
 
     def add_argument(self, *args, **kwargs):
         """Stores argument defs to be applied to argparse later."""

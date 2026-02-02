@@ -14,3 +14,8 @@ class DiceEngine(ABC):
             if not explode or roll != sides:
                 break
         return die_total
+
+    @property
+    def help_text(self) -> str:
+        """Returns system-specific help text for dice mechanics."""
+        return ""

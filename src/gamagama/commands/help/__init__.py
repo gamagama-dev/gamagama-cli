@@ -16,15 +16,21 @@ class HelpDescriptionVisitor(NodeVisitor):
 class HelpPrinterVisitor(NodeVisitor):
     """Visitor to print the full help output for a node."""
 
-    def __init__(self, path):
+    def __init__(self, path, session=None):
         self.path = path
         self.path_str = " ".join(path)
+        self.session = session
 
     def visit_CommandSpec(self, node):
         print(f"Help for '{self.path_str}':")
         text = node.description if node.description else node.help
         for line in text.strip().splitlines():
             print(f"  {line}")
+        
+        if node.dynamic_help and self.session:
+            extra_help = node.dynamic_help(self.session)
+            if extra_help:
+                print(extra_help)
 
     def visit_MapBranch(self, node):
         header = f"Available commands in '{node.name}':" if node.name != "root" else "Available commands:"
@@ -86,7 +92,7 @@ class HelpCommand(CommandBase):
             return
 
         display_path = self._get_node_path(target_node)
-        visitor = HelpPrinterVisitor(display_path)
+        visitor = HelpPrinterVisitor(display_path, session)
         visitor.visit(target_node)
 
     def _resolve_target(self, start_node, path_parts):

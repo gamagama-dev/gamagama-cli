@@ -28,6 +28,13 @@ Examples:
             nargs="+",
             help="One or more dice specifications (e.g., '3d6', '1d20+5').",
         )
+        
+        def get_dice_help(session):
+            if session and session.system:
+                return session.system.dice.help_text
+            return ""
+
+        spec.dynamic_help = get_dice_help
 
     def handle(self, args):
         """Handler for the 'roll' command."""

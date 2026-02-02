@@ -34,3 +34,12 @@ class RolemasterDiceEngine(DiceEngine):
 
         else:
             return first_roll
+
+    @property
+    def help_text(self) -> str:
+        return """
+System Rules (Rolemaster):
+  d%!      - Open-Ended Roll:
+             * 96-100: Roll again and add (recursive).
+             * 01-05:  Roll again and subtract (recursive).
+"""
