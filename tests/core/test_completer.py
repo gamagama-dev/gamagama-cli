@@ -14,7 +14,7 @@ def test_complete_local():
         mock_rl.get_line_buffer.return_value = "ad"
         
         res = completer.complete("ad", 0)
-        assert res == "add"
+        assert res == "add "
 
 def test_complete_bubbling():
     tree = Tree()
@@ -34,7 +34,7 @@ def test_complete_bubbling():
         
         # state 0 should return "roll"
         res = completer.complete("ro", 0)
-        assert res == "roll"
+        assert res == "roll "
 
 def test_complete_path():
     tree = Tree()
@@ -49,4 +49,4 @@ def test_complete_path():
         mock_rl.get_line_buffer.return_value = "player a"
         
         res = completer.complete("a", 0)
-        assert res == "add"
+        assert res == "add "
