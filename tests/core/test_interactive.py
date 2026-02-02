@@ -23,7 +23,7 @@ def test_greedy_resolution_execution(capsys):
     captured = capsys.readouterr()
     
     # Verify that the output of SystemShowCommand appeared
-    assert "Current system: rolemaster" in captured.out
+    assert "Current system: generic" in captured.out
     # Verify we didn't get a "Command not found" error
     assert "Command not found" not in captured.out
 

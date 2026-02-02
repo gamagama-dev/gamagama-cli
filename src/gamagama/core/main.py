@@ -37,7 +37,7 @@ def run():
     # Priority: CLI Arg > Config > Default
     # args.system is validated by argparse choices.
     # config_system is validated by validate_config.
-    system_name = args.system or config_system or "rolemaster"
+    system_name = args.system or config_system or "generic"
     system_class = SYSTEMS[system_name]
 
     # 4. Build the command tree

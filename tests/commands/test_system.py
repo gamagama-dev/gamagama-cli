@@ -17,10 +17,10 @@ def _create_args():
 def test_system_show(capsys):
     cmd = SystemShowCommand()
     args = _create_args()
-    # Default is Rolemaster
+    # Default is Generic
     cmd.handle(args)
     captured = capsys.readouterr()
-    assert "Current system: rolemaster" in captured.out
+    assert "Current system: generic" in captured.out
 
 
 def test_system_list(capsys):
@@ -35,13 +35,13 @@ def test_system_list(capsys):
 def test_system_set_valid(capsys):
     cmd = SystemSetCommand()
     args = _create_args()
-    args.system_name = "generic"
+    args.system_name = "rolemaster"
     
     cmd.handle(args)
     
     captured = capsys.readouterr()
-    assert "System changed to: generic" in captured.out
-    assert isinstance(args._session.system, GenericSystem)
+    assert "System changed to: rolemaster" in captured.out
+    assert isinstance(args._session.system, RolemasterSystem)
 
 
 def test_system_set_invalid(capsys):
@@ -53,5 +53,5 @@ def test_system_set_invalid(capsys):
     
     captured = capsys.readouterr()
     assert "System 'invalid_game' not found" in captured.out
-    # Should remain Rolemaster
-    assert isinstance(args._session.system, RolemasterSystem)
+    # Should remain Generic
+    assert isinstance(args._session.system, GenericSystem)
