@@ -32,7 +32,7 @@ class Completer:
             # Strict traversal for subsequent words
             target_branch = self._resolve_path(start_node, path)
             if target_branch and isinstance(target_branch, Branch):
-                options = [node.name for node in target_branch if node.name and node.name.startswith(text)]
+                options = [node.name + " " for node in target_branch if node.name and node.name.startswith(text)]
 
         if state < len(options):
             return options[state]
@@ -45,7 +45,7 @@ class Completer:
             if isinstance(curr, Branch):
                 for node in curr:
                     if node.name and node.name.startswith(text):
-                        options.add(node.name)
+                        options.add(node.name + " ")
             curr = curr.parent
         return sorted(list(options))
 
