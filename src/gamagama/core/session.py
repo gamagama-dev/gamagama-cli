@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from gamagama.core.registry import CommandTree
 from gamagama.core.tree import Node
+from gamagama.systems import GameSystem, RolemasterSystem
 
 
 @dataclass
@@ -9,6 +10,7 @@ class Session:
     tree: CommandTree
     current_node: Node = field(init=False)
     should_exit: bool = False
+    system: GameSystem = field(default_factory=RolemasterSystem)
 
     def __post_init__(self):
         self.current_node = self.tree.root

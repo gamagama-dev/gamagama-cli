@@ -40,6 +40,11 @@ def run_cli_mode(tree):
     args = parser.parse_args(cli_args)
     
     if hasattr(args, "func"):
+        # Create a transient session for this command execution
+        session = Session(tree)
+        setattr(args, "_session", session)
+        setattr(args, "_interactive", False)
+
         args.func(args)
     else:
         parser.print_help()
