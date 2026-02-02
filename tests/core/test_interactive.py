@@ -2,6 +2,7 @@ from unittest.mock import patch
 from gamagama.core.main import run_interactive_mode
 from gamagama.core.registry import CommandTree
 from gamagama.commands import discover_commands
+from gamagama.systems import GenericSystem
 
 
 def test_greedy_resolution_execution(capsys):
@@ -18,7 +19,7 @@ def test_greedy_resolution_execution(capsys):
     inputs = ["system show", "quit"]
     
     with patch("builtins.input", side_effect=inputs):
-        run_interactive_mode(tree)
+        run_interactive_mode(tree, GenericSystem)
 
     captured = capsys.readouterr()
     
@@ -41,7 +42,7 @@ def test_greedy_resolution_navigation(capsys):
     inputs = ["system", "quit"]
     
     with patch("builtins.input", side_effect=inputs):
-        run_interactive_mode(tree)
+        run_interactive_mode(tree, GenericSystem)
 
     captured = capsys.readouterr()
     
@@ -62,7 +63,7 @@ def test_greedy_resolution_partial_fail(capsys):
     inputs = ["system invalid", "quit"]
     
     with patch("builtins.input", side_effect=inputs):
-        run_interactive_mode(tree)
+        run_interactive_mode(tree, GenericSystem)
 
     captured = capsys.readouterr()
     assert "Command not found: invalid" in captured.out
