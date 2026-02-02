@@ -9,39 +9,58 @@ from .completer import Completer
 from .registry import CommandTree, ArgparseBuilder, CommandSpec
 from .tree import Branch
 from .session import Session
+from gamagama.systems import SYSTEMS, RolemasterSystem
 
 
 def run():
     """Main entry point for the gamagama CLI."""
-    # Build the command tree
+    # 1. Parse global options (like --system) first
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--system", help="The game system to use (e.g., 'rolemaster', 'generic').")
+    
+    # parse_known_args returns the parsed args and the 'rest' of the list
+    args, remaining_args = parser.parse_known_args()
+
+    # 2. Determine the System
+    system_class = RolemasterSystem  # Default
+    if args.system:
+        if args.system in SYSTEMS:
+            system_class = SYSTEMS[args.system]
+        else:
+            print(f"Error: Unknown system '{args.system}'. Available: {', '.join(sorted(SYSTEMS.keys()))}")
+            sys.exit(1)
+
+    # 3. Build the command tree
     tree = CommandTree()
     commands.discover_commands(tree)
 
-    # If command-line arguments are given, run in CLI mode and exit.
-    if len(sys.argv) > 1:
-        run_cli_mode(tree)
+    # 4. Decide Mode based on whether there are remaining arguments
+    if remaining_args:
+        run_cli_mode(tree, system_class, remaining_args)
     else:
-        run_interactive_mode(tree)
+        run_interactive_mode(tree, system_class)
 
 
-def run_cli_mode(tree):
+def run_cli_mode(tree, system_class, cli_args):
     """Runs the application in stateless CLI mode using argparse."""
     parser = argparse.ArgumentParser(
         prog="gg",
         description="A Game Master Game Manager for tabletop RPGs.",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
+    
+    # Re-add system arg so it shows in help, even though we handled it
+    parser.add_argument("--system", help="The game system to use.")
 
     # Build argparse structure from tree
     builder = ArgparseBuilder(tree)
     builder.build(parser)
 
-    cli_args = sys.argv[1:]
     args = parser.parse_args(cli_args)
     
     if hasattr(args, "func"):
         # Create a transient session for this command execution
-        session = Session(tree)
+        session = Session(tree, system=system_class())
         setattr(args, "_session", session)
         setattr(args, "_interactive", False)
 
@@ -50,15 +69,15 @@ def run_cli_mode(tree):
         parser.print_help()
 
 
-def run_interactive_mode(tree):
+def run_interactive_mode(tree, system_class):
     """Runs the application in stateful interactive mode."""
-    session = Session(tree)
+    session = Session(tree, system=system_class())
     
     completer = Completer(tree, session)
     readline.set_completer(completer.complete)
     readline.parse_and_bind("tab: complete")
 
-    print("Welcome to gamagama!")
+    print(f"Welcome to gamagama! (System: {session.system.name})")
     print("Type 'quit' to exit.")
 
     while not session.should_exit:
