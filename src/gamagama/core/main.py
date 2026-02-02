@@ -9,12 +9,17 @@ from .completer import Completer
 from .registry import CommandTree, ArgparseBuilder, CommandSpec
 from .tree import Branch
 from .session import Session
+from .config import load_config
 from gamagama.systems import SYSTEMS, RolemasterSystem
 
 
 def run():
     """Main entry point for the gamagama CLI."""
-    # 1. Parse global options (like --system) first
+    # 1. Load Config
+    config = load_config()
+    config_system = config.get("core", {}).get("system")
+
+    # 2. Parse global options (like --system) first
     parser = argparse.ArgumentParser(add_help=False)
     
     system_choices = sorted(SYSTEMS.keys())
@@ -27,16 +32,21 @@ def run():
     # parse_known_args returns the parsed args and the 'rest' of the list
     args, remaining_args = parser.parse_known_args()
 
-    # 2. Determine the System
-    system_class = RolemasterSystem  # Default
-    if args.system:
-        system_class = SYSTEMS[args.system]
+    # 3. Determine the System
+    # Priority: CLI Arg > Config > Default
+    system_name = args.system or config_system or "rolemaster"
 
-    # 3. Build the command tree
+    if system_name in SYSTEMS:
+        system_class = SYSTEMS[system_name]
+    else:
+        print(f"Error: System '{system_name}' not found. Available: {', '.join(system_choices)}")
+        sys.exit(1)
+
+    # 4. Build the command tree
     tree = CommandTree()
     commands.discover_commands(tree)
 
-    # 4. Decide Mode based on whether there are remaining arguments
+    # 5. Decide Mode based on whether there are remaining arguments
     if remaining_args:
         run_cli_mode(tree, system_class, remaining_args)
     else:
