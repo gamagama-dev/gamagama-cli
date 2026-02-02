@@ -1,7 +1,7 @@
 import os
 import tomllib
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Iterable
 
 
 def load_config() -> Dict[str, Any]:
@@ -27,3 +27,15 @@ def load_config() -> Dict[str, Any]:
                 print(f"Warning: Failed to load config file at {path}: {e}")
     
     return {}
+
+
+def validate_config(config: Dict[str, Any], valid_systems: Iterable[str]) -> None:
+    """
+    Validates the configuration against allowed values.
+    Modifies the config dictionary in-place by removing invalid entries.
+    """
+    if "core" in config:
+        sys_val = config["core"].get("system")
+        if sys_val and sys_val not in valid_systems:
+            print(f"Warning: Invalid system '{sys_val}' in config file. Ignoring.")
+            del config["core"]["system"]

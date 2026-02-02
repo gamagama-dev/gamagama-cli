@@ -9,14 +9,15 @@ from .completer import Completer
 from .registry import CommandTree, ArgparseBuilder, CommandSpec
 from .tree import Branch
 from .session import Session
-from .config import load_config
+from .config import load_config, validate_config
 from gamagama.systems import SYSTEMS, RolemasterSystem
 
 
 def run():
     """Main entry point for the gamagama CLI."""
-    # 1. Load Config
+    # 1. Load and Validate Config
     config = load_config()
+    validate_config(config, SYSTEMS.keys())
     config_system = config.get("core", {}).get("system")
 
     # 2. Parse global options (like --system) first
@@ -34,13 +35,10 @@ def run():
 
     # 3. Determine the System
     # Priority: CLI Arg > Config > Default
+    # args.system is validated by argparse choices.
+    # config_system is validated by validate_config.
     system_name = args.system or config_system or "rolemaster"
-
-    if system_name in SYSTEMS:
-        system_class = SYSTEMS[system_name]
-    else:
-        print(f"Error: System '{system_name}' not found. Available: {', '.join(system_choices)}")
-        sys.exit(1)
+    system_class = SYSTEMS[system_name]
 
     # 4. Build the command tree
     tree = CommandTree()
