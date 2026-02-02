@@ -20,7 +20,6 @@ Examples:
   1d20+5   - Roll 1d20 and add 5
   2d8-2    - Roll 2d8 and subtract 2
   d%       - Roll a percentile die (1-100)
-  d%!      - Rolemaster Open-Ended (Explodes up on 96-100, down on 1-5)
 """
 
     def setup(self, spec):
@@ -62,7 +61,7 @@ Examples:
 
         rolls = []
         for _ in range(num_dice):
-            rolls.append(system.roll_die(sides, should_explode))
+            rolls.append(system.dice.roll(sides, should_explode))
 
         total = sum(rolls) + modifier
 

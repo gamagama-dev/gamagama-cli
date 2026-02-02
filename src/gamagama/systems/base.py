@@ -1,5 +1,5 @@
-from abc import ABC, abstractmethod
-import random
+from abc import ABC
+from .dice import DiceEngine
 
 
 class GameSystem(ABC):
@@ -7,16 +7,5 @@ class GameSystem(ABC):
     
     name = "generic"
 
-    def roll_die(self, sides: int, explode: bool) -> int:
-        """
-        Rolls a single die. 
-        Override this to implement system-specific mechanics (like Open-Ended rolls).
-        """
-        # Default generic behavior
-        die_total = 0
-        while True:
-            roll = random.randint(1, sides)
-            die_total += roll
-            if not explode or roll != sides:
-                break
-        return die_total
+    def __init__(self):
+        self.dice = DiceEngine()
