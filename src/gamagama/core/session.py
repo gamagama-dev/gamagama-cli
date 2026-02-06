@@ -1,4 +1,7 @@
 from dataclasses import dataclass, field
+from typing import Dict, Optional
+
+from gamagama.characters import Character, CharacterStore
 from gamagama.core.registry import CommandTree
 from gamagama.core.tree import Node
 from gamagama.systems import GameSystem, RolemasterSystem, GenericSystem
@@ -11,6 +14,8 @@ class Session:
     current_node: Node = field(init=False)
     should_exit: bool = False
     system: GameSystem = field(default_factory=GenericSystem)
+    store: CharacterStore = field(default_factory=CharacterStore)
+    players: Dict[str, Character] = field(default_factory=dict)
 
     def __post_init__(self):
         self.current_node = self.tree.root
