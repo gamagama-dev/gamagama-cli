@@ -1,4 +1,4 @@
-from gamagama.commands.quit import QuitCommand
+from gamagama.cli.commands.quit import QuitCommand
 
 
 def test_quit_command_handler():

@@ -1,7 +1,7 @@
 import argparse
-from gamagama.commands.help import HelpCommand
-from gamagama.core.session import Session
-from gamagama.core.tree import MapBranch
+from gamagama.cli.commands.help import HelpCommand
+from gamagama.cli.core.session import Session
+from gamagama.cli.core.tree import MapBranch
 
 
 def test_help_command_list_output(parser_and_tree, capsys):

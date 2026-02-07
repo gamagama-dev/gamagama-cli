@@ -1,6 +1,6 @@
 # Development
 
-This document provides instructions for setting up a development environment to contribute to `gamagama`.
+This document provides instructions for setting up a development environment to contribute to `gamagama-cli`.
 
 ## Setup
 
@@ -11,7 +11,7 @@ This project uses a local Python virtual environment managed via the `Makefile`.
     make install
     ```
 
-2.  **Activate the Virtual Environment**: To use the tools installed in the virtual environment (like `gg` and `pytest`) directly from your shell, you must activate it.
+2.  **Activate the Virtual Environment**: To use the tools installed in the virtual environment (like `gg-cli` and `pytest`) directly from your shell, you must activate it.
     *   On macOS and Linux:
         ```bash
         source .venv/bin/activate

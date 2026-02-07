@@ -1,6 +1,6 @@
 # Interactive Mode
 
-Gamagama is designed to be used primarily in **Interactive Mode**.
+gamagama-cli is designed to be used primarily in **Interactive Mode**.
 
 ## The Prompt
 

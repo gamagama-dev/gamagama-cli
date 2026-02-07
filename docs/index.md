@@ -1,6 +1,6 @@
-# Welcome to Gamagama
+# Welcome to gamagama-cli
 
-Gamagama is a **Game Master Game Manager** for tabletop RPGs.
+gamagama-cli is a **Game Master Game Manager** CLI for tabletop RPGs.
 
 It provides a structured, interactive command-line interface (CLI) to manage your campaign data. Think of it as a file system for your RPG campaign, where folders are categories (Players, NPCs, Locations) and files are data points, but with specialized commands to interact with them.
 

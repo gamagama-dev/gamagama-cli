@@ -1,6 +1,6 @@
 # Commands
 
-Here is a list of standard commands available in Gamagama.
+Here is a list of standard commands available in gamagama-cli.
 
 ## Global Commands
 

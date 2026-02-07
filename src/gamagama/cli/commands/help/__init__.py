@@ -1,6 +1,6 @@
 from ..base import CommandBase
-from gamagama.core.tree import NodeVisitor, MapBranch, Branch
-from gamagama.core.registry import CommandSpec
+from gamagama.cli.core.tree import NodeVisitor, MapBranch, Branch
+from gamagama.cli.core.registry import CommandSpec
 
 
 class HelpDescriptionVisitor(NodeVisitor):

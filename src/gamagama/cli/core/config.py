@@ -8,14 +8,14 @@ def load_config() -> Dict[str, Any]:
     """
     Loads configuration from standard locations.
     Priority:
-    1. ~/.config/gg/config.toml
-    2. ~/.gg.toml
+    1. ~/.config/gg-cli/config.toml
+    2. ~/.gg-cli.toml
     """
     home = Path.home()
     
     candidates = [
-        home / ".config" / "gg" / "config.toml",
-        home / ".gg.toml",
+        home / ".config" / "gg-cli" / "config.toml",
+        home / ".gg-cli.toml",
     ]
 
     for path in candidates:

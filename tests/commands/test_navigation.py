@@ -1,8 +1,8 @@
 import argparse
 import pytest
-from gamagama.commands.navigation import UpCommand, RootCommand
-from gamagama.core.session import Session
-from gamagama.core.tree import MapBranch
+from gamagama.cli.commands.navigation import UpCommand, RootCommand
+from gamagama.cli.core.session import Session
+from gamagama.cli.core.tree import MapBranch
 
 def test_up_command(parser_and_tree):
     _, tree = parser_and_tree

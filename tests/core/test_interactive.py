@@ -1,8 +1,8 @@
 from unittest.mock import patch
-from gamagama.core.main import run_interactive_mode
-from gamagama.core.registry import CommandTree
-from gamagama.commands import discover_commands
-from gamagama.systems import GenericSystem
+from gamagama.cli.core.main import run_interactive_mode
+from gamagama.cli.core.registry import CommandTree
+from gamagama.cli.commands import discover_commands
+from gamagama.cli.systems import GenericSystem
 
 
 def test_show_at_root(capsys):

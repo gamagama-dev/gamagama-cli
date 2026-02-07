@@ -3,8 +3,8 @@ import inspect
 import pkgutil
 
 from .base import CommandBase
-from gamagama.core.registry import CommandSpec
-from gamagama.core.domain import DomainBranch
+from gamagama.cli.core.registry import CommandSpec
+from gamagama.cli.core.domain import DomainBranch
 
 
 def discover_commands(tree):

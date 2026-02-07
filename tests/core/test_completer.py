@@ -1,7 +1,7 @@
 from unittest.mock import patch
-from gamagama.core.completer import Completer
-from gamagama.core.tree import Tree, MapBranch
-from gamagama.core.session import Session
+from gamagama.cli.core.completer import Completer
+from gamagama.cli.core.tree import Tree, MapBranch
+from gamagama.cli.core.session import Session
 
 def test_complete_local():
     tree = Tree()
@@ -10,7 +10,7 @@ def test_complete_local():
     session = Session(tree)
     completer = Completer(tree, session)
     
-    with patch("gamagama.core.completer.readline") as mock_rl:
+    with patch("gamagama.cli.core.completer.readline") as mock_rl:
         mock_rl.get_line_buffer.return_value = "ad"
         
         res = completer.complete("ad", 0)
@@ -28,7 +28,7 @@ def test_complete_bubbling():
     
     completer = Completer(tree, session)
     
-    with patch("gamagama.core.completer.readline") as mock_rl:
+    with patch("gamagama.cli.core.completer.readline") as mock_rl:
         # Case: User types "ro" inside player
         mock_rl.get_line_buffer.return_value = "ro"
         
@@ -44,7 +44,7 @@ def test_complete_path():
     # At root
     completer = Completer(tree, session)
     
-    with patch("gamagama.core.completer.readline") as mock_rl:
+    with patch("gamagama.cli.core.completer.readline") as mock_rl:
         # Case: User types "player a"
         mock_rl.get_line_buffer.return_value = "player a"
         

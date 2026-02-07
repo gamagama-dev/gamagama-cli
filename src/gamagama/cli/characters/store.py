@@ -10,7 +10,7 @@ class CharacterStore:
 
     def __init__(self, base_dir: Optional[Path] = None):
         if base_dir is None:
-            base_dir = Path.home() / ".config" / "gg" / "characters"
+            base_dir = Path.home() / ".config" / "gg-cli" / "characters"
         self.base_dir = base_dir
 
     def load(self, name: str) -> Optional[Character]:

@@ -2,9 +2,9 @@
 from dataclasses import dataclass, field
 from typing import Set
 
-from gamagama.core.domain import Domain, DomainBranch
-from gamagama.core.tree import Tree
-from gamagama.core.session import Session
+from gamagama.cli.core.domain import Domain, DomainBranch
+from gamagama.cli.core.tree import Tree
+from gamagama.cli.core.session import Session
 
 
 def test_domain_branch_is_domain():

@@ -1,0 +1,1 @@
+# gamagama.cli.core package

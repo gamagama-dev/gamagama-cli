@@ -1,4 +1,4 @@
-from gamagama.characters import Character
+from gamagama.cli.characters import Character
 
 
 def test_character_defaults():

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from gamagama.core.registry import CommandSpec
+from gamagama.cli.core.registry import CommandSpec
 
 
 class CommandBase(ABC):

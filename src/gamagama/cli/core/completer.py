@@ -1,5 +1,5 @@
 import readline
-from gamagama.core.tree import Branch
+from gamagama.cli.core.tree import Branch
 
 
 class Completer:

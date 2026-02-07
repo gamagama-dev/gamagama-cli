@@ -1,10 +1,10 @@
 import argparse
 import json
 
-from gamagama.characters import Character, CharacterStore
-from gamagama.commands.player import PlayerDomain
-from gamagama.core.session import Session
-from gamagama.core.tree import Tree
+from gamagama.cli.characters import Character, CharacterStore
+from gamagama.cli.commands.player import PlayerDomain
+from gamagama.cli.core.session import Session
+from gamagama.cli.core.tree import Tree
 
 
 def _create_session(tmp_path=None):

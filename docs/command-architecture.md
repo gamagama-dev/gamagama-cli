@@ -1,6 +1,6 @@
 # Command Architecture
 
-This document describes the command architecture for Gamagama's CLI interface.
+This document describes the command architecture for gamagama-cli's interface.
 
 ## Core Concepts
 
@@ -127,7 +127,7 @@ class Session:
 ## Example Session
 
 ```bash
-$ gg
+$ gg-cli
 > list system
 Available systems:
   generic
@@ -254,7 +254,7 @@ Error: 'load' is not available in this context
 
 Schemas are Pydantic models that live in each `GameSystem`. They serve two purposes:
 
-1. **Validation:** gg validates characters on load against the system's schema
+1. **Validation:** gg-cli validates characters on load against the system's schema
 2. **Export:** External tools can retrieve JSON Schema via the `show` command
 
 ### Schema Registry

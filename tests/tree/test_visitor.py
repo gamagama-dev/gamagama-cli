@@ -1,6 +1,6 @@
 import pytest
 from dataclasses import dataclass
-from gamagama.core.tree import Tree, SeqBranch, Leaf, NodeVisitor
+from gamagama.cli.core.tree import Tree, SeqBranch, Leaf, NodeVisitor
 
 
 def test_visitor_pattern():

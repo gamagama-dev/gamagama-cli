@@ -1,1 +1,1 @@
-# Tests for the gamagama.core.tree package
+# Tests for the gamagama.cli.core.tree package

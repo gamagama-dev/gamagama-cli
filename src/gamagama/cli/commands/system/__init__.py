@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set
 
-from gamagama.core.domain import DomainBranch
-from gamagama.systems import SYSTEMS
+from gamagama.cli.core.domain import DomainBranch
+from gamagama.cli.systems import SYSTEMS
 
 
 @dataclass(eq=False)

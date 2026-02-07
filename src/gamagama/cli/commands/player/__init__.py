@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set
 
-from gamagama.core.domain import DomainBranch
+from gamagama.cli.core.domain import DomainBranch
 
 
 @dataclass(eq=False)

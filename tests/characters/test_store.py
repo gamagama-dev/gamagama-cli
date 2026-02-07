@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from gamagama.characters import CharacterStore
+from gamagama.cli.characters import CharacterStore
 
 
 def test_store_load_success(tmp_path):
@@ -39,5 +39,5 @@ def test_store_load_not_found(tmp_path, capsys):
 
 def test_store_default_base_dir():
     store = CharacterStore()
-    expected = Path.home() / ".config" / "gg" / "characters"
+    expected = Path.home() / ".config" / "gg-cli" / "characters"
     assert store.base_dir == expected

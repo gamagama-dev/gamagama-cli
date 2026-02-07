@@ -1,4 +1,4 @@
-site_name: Gamagama
+site_name: gamagama-cli
 site_description: A Game Master Game Manager for tabletop RPGs.
 theme:
   name: material

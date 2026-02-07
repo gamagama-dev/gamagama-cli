@@ -1,10 +1,10 @@
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 
-from gamagama.characters import Character, CharacterStore
-from gamagama.core.registry import CommandTree
-from gamagama.core.tree import Node
-from gamagama.systems import GameSystem, RolemasterSystem, GenericSystem
+from gamagama.cli.characters import Character, CharacterStore
+from gamagama.cli.core.registry import CommandTree
+from gamagama.cli.core.tree import Node
+from gamagama.cli.systems import GameSystem, RolemasterSystem, GenericSystem
 
 
 @dataclass

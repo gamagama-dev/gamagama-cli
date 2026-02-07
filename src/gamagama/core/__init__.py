@@ -1,1 +1,0 @@
-# gamagama.core package

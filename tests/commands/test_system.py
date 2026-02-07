@@ -1,7 +1,7 @@
-from gamagama.commands.system import SystemDomain
-from gamagama.core.session import Session
-from gamagama.core.tree import Tree
-from gamagama.systems import RolemasterSystem, GenericSystem
+from gamagama.cli.commands.system import SystemDomain
+from gamagama.cli.core.session import Session
+from gamagama.cli.core.tree import Tree
+from gamagama.cli.systems import RolemasterSystem, GenericSystem
 
 
 def _create_session():

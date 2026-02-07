@@ -1,8 +1,8 @@
 import argparse
 from unittest.mock import patch
-from gamagama.commands.roll import RollCommand
-from gamagama.core.session import Session
-from gamagama.core.tree import Tree
+from gamagama.cli.commands.roll import RollCommand
+from gamagama.cli.core.session import Session
+from gamagama.cli.core.tree import Tree
 
 
 def _create_args(dice_spec, system=None):

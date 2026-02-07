@@ -1,6 +1,6 @@
 import pytest
 from dataclasses import dataclass
-from gamagama.core.tree import Tree, MapBranch, SeqBranch, Leaf, Branch, Node
+from gamagama.cli.core.tree import Tree, MapBranch, SeqBranch, Leaf, Branch, Node
 
 
 def test_tree_insert_flat():

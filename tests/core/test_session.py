@@ -1,6 +1,6 @@
-from gamagama.characters import CharacterStore
-from gamagama.core.session import Session
-from gamagama.core.tree import Tree
+from gamagama.cli.characters import CharacterStore
+from gamagama.cli.core.session import Session
+from gamagama.cli.core.tree import Tree
 
 
 def test_session_init():

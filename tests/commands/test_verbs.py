@@ -2,19 +2,19 @@
 import argparse
 import json
 
-from gamagama.characters import Character, CharacterStore
-from gamagama.commands.verbs import (
+from gamagama.cli.characters import Character, CharacterStore
+from gamagama.cli.commands.verbs import (
     ShowCommand,
     ListCommand,
     SetCommand,
     LoadCommand,
     DropCommand,
 )
-from gamagama.commands.player import PlayerDomain
-from gamagama.commands.system import SystemDomain
-from gamagama.core.session import Session
-from gamagama.core.registry import CommandTree
-from gamagama.commands import discover_commands
+from gamagama.cli.commands.player import PlayerDomain
+from gamagama.cli.commands.system import SystemDomain
+from gamagama.cli.core.session import Session
+from gamagama.cli.core.registry import CommandTree
+from gamagama.cli.commands import discover_commands
 
 
 def _create_session(tmp_path=None):

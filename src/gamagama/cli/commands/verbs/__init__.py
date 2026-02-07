@@ -1,10 +1,10 @@
 from ..base import CommandBase
-from gamagama.core.domain import DomainBranch
+from gamagama.cli.core.domain import DomainBranch
 
 
 def _find_domain(session, domain_name):
     """Find a domain branch by name, searching from root."""
-    from gamagama.core.tree import Branch
+    from gamagama.cli.core.tree import Branch
 
     def search(node):
         if isinstance(node, DomainBranch) and node.name == domain_name:
@@ -35,7 +35,7 @@ def _resolve_domain(session, domain_name=None):
 
 def _collect_all_actives(session):
     """Collect all top-level domain actives from the tree for root-level show."""
-    from gamagama.core.tree import Branch
+    from gamagama.cli.core.tree import Branch
 
     actives = {}
 

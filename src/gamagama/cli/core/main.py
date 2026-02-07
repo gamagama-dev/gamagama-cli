@@ -11,7 +11,7 @@ from .tree import Branch
 from .domain import DomainBranch
 from .session import Session
 from .config import load_config, validate_config
-from gamagama.systems import SYSTEMS, RolemasterSystem
+from gamagama.cli.systems import SYSTEMS, RolemasterSystem
 
 
 def run():
@@ -55,7 +55,7 @@ def run():
 def run_cli_mode(tree, system_class, cli_args):
     """Runs the application in stateless CLI mode using argparse."""
     parser = argparse.ArgumentParser(
-        prog="gg",
+        prog="gg-cli",
         description="A Game Master Game Manager for tabletop RPGs.",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )

@@ -3,15 +3,14 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "gamagama"
+name = "gamagama-cli"
 version = "0.1.0"
 description = "A Game Master Game Manager for tabletop RPGs."
 readme = "README.md"
 requires-python = ">=3.8"
 
 [project.scripts]
-gamagama = "gamagama.core.main:run"
-gg = "gamagama.core.main:run"
+gg-cli = "gamagama.cli.core.main:run"
 
 [project.optional-dependencies]
 test = [
@@ -21,3 +20,6 @@ docs = [
     "mkdocs",
     "mkdocs-material",
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]

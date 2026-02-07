@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 make install                # Create .venv and install in editable mode with test deps
-source .venv/bin/activate   # Activate venv (required for pytest/gg directly)
+source .venv/bin/activate   # Activate venv (required for pytest/gg-cli directly)
 pytest                      # Run all tests (fast, requires activated venv)
 pytest tests/commands/      # Run a specific test directory
 pytest tests/test_main.py::test_name  # Run a single test
@@ -15,7 +15,11 @@ make test                   # Safe: ensures venv + deps before running pytest
 
 ## Architecture
 
-Gamagama is a dual-mode CLI tool (`gg`): it runs either as a one-shot CLI (when args are provided) or as an interactive REPL (when launched with no args). Both modes share the same command tree and session injection.
+Gamagama-cli is a dual-mode CLI tool (`gg-cli`): it runs either as a one-shot CLI (when args are provided) or as an interactive REPL (when launched with no args). Both modes share the same command tree and session injection.
+
+### Namespace Package
+
+The `gamagama` Python namespace is a PEP 420 implicit namespace package (no `__init__.py` at `src/gamagama/`). This tool contributes the `gamagama.cli` sub-package. All source code lives under `src/gamagama/cli/`.
 
 ### Core Flow
 
@@ -23,7 +27,7 @@ Gamagama is a dual-mode CLI tool (`gg`): it runs either as a one-shot CLI (when 
 
 ### Command System
 
-Commands are auto-discovered. To add one, create a module under `src/gamagama/commands/` with a class that inherits `CommandBase`:
+Commands are auto-discovered. To add one, create a module under `src/gamagama/cli/commands/` with a class that inherits `CommandBase`:
 - `name`: command identifier
 - `path`: list of parent branch names (e.g., `["system"]` nests it under the `system` branch)
 - `setup(spec)`: call `spec.add_argument()` to define args (stored, applied to argparse later)

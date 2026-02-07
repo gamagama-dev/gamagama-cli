@@ -1,7 +1,7 @@
-from gamagama.core.main import _resolve_node, _build_prompt_path
-from gamagama.core.tree import MapBranch, Tree
-from gamagama.core.session import Session
-from gamagama.core.domain import DomainBranch
+from gamagama.cli.core.main import _resolve_node, _build_prompt_path
+from gamagama.cli.core.tree import MapBranch, Tree
+from gamagama.cli.core.session import Session
+from gamagama.cli.core.domain import DomainBranch
 
 
 def test_resolve_node_local():
@@ -56,12 +56,12 @@ def test_build_prompt_path_with_domain():
     session.active_player = "active_item"
 
     # Use PlayerDomain which is a real domain
-    from gamagama.commands.player import PlayerDomain
+    from gamagama.cli.commands.player import PlayerDomain
     domain = PlayerDomain()
     tree.root.add_child(domain)
 
     # First add a player so get_active can return it
-    from gamagama.characters import Character
+    from gamagama.cli.characters import Character
     session.players["active_item"] = Character(name="Active Item")
 
     assert _build_prompt_path(domain, session) == "player (active_item)"
@@ -72,7 +72,7 @@ def test_build_prompt_path_domain_no_active():
     session = Session(tree)
 
     # Use PlayerDomain which is a real domain
-    from gamagama.commands.player import PlayerDomain
+    from gamagama.cli.commands.player import PlayerDomain
     domain = PlayerDomain()
     tree.root.add_child(domain)
 
