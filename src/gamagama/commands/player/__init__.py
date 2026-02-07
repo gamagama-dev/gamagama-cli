@@ -1,104 +1,105 @@
-from ..base import CommandBase
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Set
+
+from gamagama.core.domain import DomainBranch
 
 
-class PlayerLoadCommand(CommandBase):
-    name = "load"
-    help = "Load a character from disk."
-    path = ["player"]
+@dataclass(eq=False)
+class PlayerDomain(DomainBranch):
+    """Domain for managing player characters."""
 
-    def setup(self, spec):
-        spec.add_argument("name", help="Name of the character to load")
+    name: str = "player"
+    supported_verbs: Set[str] = field(
+        default_factory=lambda: {"show", "list", "set", "load", "drop"}
+    )
 
-    def handle(self, args):
-        session = args._session
-        name = args.name
+    def list_items(self, session) -> List[str]:
+        """Return list of loaded player names."""
+        return list(session.players.keys())
 
+    def get_active(self, session) -> Optional[str]:
+        """Return the active player name."""
+        return session.active_player
+
+    def set_active(self, session, name: str) -> bool:
+        """Set the active player. Returns True if player exists."""
+        if name not in session.players:
+            return False
+        session.active_player = name
+        return True
+
+    def show_item(self, session, name: Optional[str]) -> Optional[str]:
+        """Return player details as a string."""
+        target = name if name else session.active_player
+        if not target or target not in session.players:
+            return None
+
+        char = session.players[target]
+        lines = [
+            f"Name: {char.name}",
+            f"System: {char.system}",
+        ]
+
+        if char.strings:
+            lines.append("Strings:")
+            for key, value in char.strings.items():
+                lines.append(f"  {key}: {value}")
+
+        if char.stats:
+            lines.append("Stats:")
+            for key, value in char.stats.items():
+                lines.append(f"  {key}: {value}")
+
+        if char.skills:
+            lines.append("Skills:")
+            for key, value in char.skills.items():
+                lines.append(f"  {key}: {value}")
+
+        if char.counts:
+            lines.append("Counts:")
+            for key, (current, max_val) in char.counts.items():
+                lines.append(f"  {key}: {current}/{max_val}")
+
+        return "\n".join(lines)
+
+    def has_nested_domains(self) -> bool:
+        """Player has no nested domains."""
+        return False
+
+    def get_nested_actives(self, session) -> Dict[str, str]:
+        """No nested domains."""
+        return {}
+
+    def load_item(self, session, name: str) -> bool:
+        """Load a player from disk."""
         if name in session.players:
             print(f"Character '{name}' is already loaded.")
-            return
+            return False
 
         character = session.store.load(name)
         if character is not None:
             session.players[name] = character
             print(f"Loaded character: {character.name}")
+            return True
+        return False
 
+    def drop_item(self, session, name: Optional[str]) -> bool:
+        """Drop a player from the session."""
+        target = name if name else session.active_player
+        if not target:
+            print("No player specified and no active player set.")
+            return False
 
-class PlayerDropCommand(CommandBase):
-    name = "drop"
-    help = "Remove a loaded character from the session."
-    path = ["player"]
+        if target not in session.players:
+            print(f"Character '{target}' is not loaded.")
+            return False
 
-    def setup(self, spec):
-        spec.add_argument("name", help="Name of the character to drop")
+        del session.players[target]
+        print(f"Dropped character: {target}")
 
-    def handle(self, args):
-        session = args._session
-        name = args.name
+        # Clear active if we dropped the active player
+        if session.active_player == target:
+            session.active_player = None
+            print("Active player cleared.")
 
-        if name not in session.players:
-            print(f"Character '{name}' is not loaded.")
-            return
-
-        del session.players[name]
-        print(f"Dropped character: {name}")
-
-
-class PlayerListCommand(CommandBase):
-    name = "list"
-    help = "List all loaded characters."
-    path = ["player"]
-
-    def setup(self, spec):
-        pass
-
-    def handle(self, args):
-        session = args._session
-
-        if not session.players:
-            print("No characters loaded.")
-            return
-
-        print("Loaded characters:")
-        for name in session.players:
-            print(f"  {name}")
-
-
-class PlayerShowCommand(CommandBase):
-    name = "show"
-    help = "Display a loaded character's attributes."
-    path = ["player"]
-
-    def setup(self, spec):
-        spec.add_argument("name", help="Name of the character to show")
-
-    def handle(self, args):
-        session = args._session
-        name = args.name
-
-        if name not in session.players:
-            print(f"Character '{name}' is not loaded.")
-            return
-
-        char = session.players[name]
-        print(f"Name: {char.name}")
-        print(f"System: {char.system}")
-
-        if char.strings:
-            print("Strings:")
-            for key, value in char.strings.items():
-                print(f"  {key}: {value}")
-
-        if char.stats:
-            print("Stats:")
-            for key, value in char.stats.items():
-                print(f"  {key}: {value}")
-
-        if char.skills:
-            print("Skills:")
-            for key, value in char.skills.items():
-                print(f"  {key}: {value}")
-
-        if char.counts:
-            print("Counts:")
-            for key, (current, max_val) in char.counts.items():
-                print(f"  {key}: {current}/{max_val}")
+        return True

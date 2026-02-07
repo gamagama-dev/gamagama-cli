@@ -16,6 +16,8 @@ class Session:
     system: GameSystem = field(default_factory=GenericSystem)
     store: CharacterStore = field(default_factory=CharacterStore)
     players: Dict[str, Character] = field(default_factory=dict)
+    active_player: Optional[str] = None
+    active_schema: Optional[str] = None
 
     def __post_init__(self):
         self.current_node = self.tree.root

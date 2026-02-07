@@ -1,55 +1,53 @@
-from ..base import CommandBase
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Set
+
+from gamagama.core.domain import DomainBranch
 from gamagama.systems import SYSTEMS
 
 
-class SystemShowCommand(CommandBase):
-    name = "show"
-    help = "Shows the current game system."
-    path = ["system"]
+@dataclass(eq=False)
+class SystemDomain(DomainBranch):
+    """Domain for managing the active game system."""
 
-    def setup(self, spec):
-        pass
+    name: str = "system"
+    supported_verbs: Set[str] = field(
+        default_factory=lambda: {"show", "list", "set"}
+    )
 
-    def handle(self, args):
-        session = getattr(args, "_session", None)
-        if not session:
-            print("Error: System command requires an active session.")
-            return
-        print(f"Current system: {session.system.name}")
+    def list_items(self, session) -> List[str]:
+        """Return list of available system names."""
+        return sorted(SYSTEMS.keys())
 
+    def get_active(self, session) -> Optional[str]:
+        """Return the active system name."""
+        return session.system.name
 
-class SystemListCommand(CommandBase):
-    name = "list"
-    help = "Lists available game systems."
-    path = ["system"]
-
-    def setup(self, spec):
-        pass
-
-    def handle(self, args):
-        print("Available systems:")
-        for name in sorted(SYSTEMS.keys()):
-            print(f" - {name}")
-
-
-class SystemSetCommand(CommandBase):
-    name = "set"
-    help = "Sets the active game system."
-    path = ["system"]
-
-    def setup(self, spec):
-        spec.add_argument("system_name", help="Name of the system to set")
-
-    def handle(self, args):
-        session = getattr(args, "_session", None)
-        if not session:
-            print("Error: System command requires an active session.")
-            return
-
-        sys_class = SYSTEMS.get(args.system_name)
+    def set_active(self, session, name: str) -> bool:
+        """Set the active system. Returns True on success."""
+        sys_class = SYSTEMS.get(name)
         if not sys_class:
-            print(f"Error: System '{args.system_name}' not found.")
-            return
-        
+            print(f"Error: System '{name}' not found.")
+            return False
         session.system = sys_class()
+        # Clear schema active when system changes
+        session.active_schema = None
         print(f"System changed to: {session.system.name}")
+        return True
+
+    def show_item(self, session, name: Optional[str]) -> Optional[str]:
+        """Return system details."""
+        target = name if name else session.system.name
+        if target not in SYSTEMS:
+            return None
+        return f"System: {target}"
+
+    def has_nested_domains(self) -> bool:
+        """System has schema as a nested domain."""
+        return True
+
+    def get_nested_actives(self, session) -> Dict[str, str]:
+        """Return nested domain actives (schema)."""
+        result = {}
+        if session.active_schema:
+            result["schema"] = session.active_schema
+        return result

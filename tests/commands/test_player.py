@@ -2,25 +2,18 @@ import argparse
 import json
 
 from gamagama.characters import Character, CharacterStore
-from gamagama.commands.player import (
-    PlayerLoadCommand,
-    PlayerDropCommand,
-    PlayerListCommand,
-    PlayerShowCommand,
-)
+from gamagama.commands.player import PlayerDomain
 from gamagama.core.session import Session
 from gamagama.core.tree import Tree
 
 
-def _create_args(tmp_path=None):
-    """Helper to create args with a valid session."""
-    args = argparse.Namespace()
+def _create_session(tmp_path=None):
+    """Helper to create a session for testing."""
     tree = Tree()
     session = Session(tree)
     if tmp_path is not None:
         session.store = CharacterStore(base_dir=tmp_path)
-    setattr(args, "_session", session)
-    return args
+    return session
 
 
 def _create_char_file(tmp_path, name, data):
@@ -28,6 +21,48 @@ def _create_char_file(tmp_path, name, data):
     char_file = tmp_path / f"{name}.json"
     char_file.write_text(json.dumps(data))
     return char_file
+
+
+class TestPlayerDomain:
+    def test_list_items_empty(self):
+        session = _create_session()
+        domain = PlayerDomain()
+
+        items = domain.list_items(session)
+        assert items == []
+
+    def test_list_items_with_players(self):
+        session = _create_session()
+        session.players["gandalf"] = Character(name="Gandalf")
+        session.players["frodo"] = Character(name="Frodo")
+        domain = PlayerDomain()
+
+        items = domain.list_items(session)
+        assert "gandalf" in items
+        assert "frodo" in items
+
+    def test_get_active_none(self):
+        session = _create_session()
+        domain = PlayerDomain()
+
+        assert domain.get_active(session) is None
+
+    def test_set_active_success(self):
+        session = _create_session()
+        session.players["gandalf"] = Character(name="Gandalf")
+        domain = PlayerDomain()
+
+        result = domain.set_active(session, "gandalf")
+        assert result is True
+        assert session.active_player == "gandalf"
+
+    def test_set_active_not_found(self):
+        session = _create_session()
+        domain = PlayerDomain()
+
+        result = domain.set_active(session, "nonexistent")
+        assert result is False
+        assert session.active_player is None
 
 
 class TestPlayerLoad:
@@ -42,111 +77,101 @@ class TestPlayerLoad:
         }
         _create_char_file(tmp_path, "gandalf", char_data)
 
-        cmd = PlayerLoadCommand()
-        args = _create_args(tmp_path)
-        args.name = "gandalf"
+        session = _create_session(tmp_path)
+        domain = PlayerDomain()
 
-        cmd.handle(args)
+        result = domain.load_item(session, "gandalf")
 
+        assert result is True
         captured = capsys.readouterr()
         assert "Loaded character: Gandalf" in captured.out
-        assert "gandalf" in args._session.players
-        assert args._session.players["gandalf"].name == "Gandalf"
+        assert "gandalf" in session.players
+        assert session.players["gandalf"].name == "Gandalf"
 
     def test_load_not_found(self, tmp_path, capsys):
-        cmd = PlayerLoadCommand()
-        args = _create_args(tmp_path)
-        args.name = "nonexistent"
+        session = _create_session(tmp_path)
+        domain = PlayerDomain()
 
-        cmd.handle(args)
+        result = domain.load_item(session, "nonexistent")
 
+        assert result is False
         captured = capsys.readouterr()
         assert "Character file not found" in captured.out
-        assert "nonexistent" not in args._session.players
+        assert "nonexistent" not in session.players
 
     def test_load_already_loaded(self, tmp_path, capsys):
         char_data = {"name": "Gandalf"}
         _create_char_file(tmp_path, "gandalf", char_data)
 
-        cmd = PlayerLoadCommand()
-        args = _create_args(tmp_path)
-        args.name = "gandalf"
+        session = _create_session(tmp_path)
+        session.players["gandalf"] = Character(name="Gandalf")
+        domain = PlayerDomain()
 
-        # Pre-load the character
-        args._session.players["gandalf"] = Character(name="Gandalf")
+        result = domain.load_item(session, "gandalf")
 
-        cmd.handle(args)
-
+        assert result is False
         captured = capsys.readouterr()
         assert "already loaded" in captured.out
 
 
 class TestPlayerDrop:
     def test_drop_success(self, capsys):
-        cmd = PlayerDropCommand()
-        args = _create_args()
-        args.name = "gandalf"
+        session = _create_session()
+        session.players["gandalf"] = Character(name="Gandalf")
+        domain = PlayerDomain()
 
-        # Pre-load the character
-        args._session.players["gandalf"] = Character(name="Gandalf")
+        result = domain.drop_item(session, "gandalf")
 
-        cmd.handle(args)
-
+        assert result is True
         captured = capsys.readouterr()
         assert "Dropped character: gandalf" in captured.out
-        assert "gandalf" not in args._session.players
+        assert "gandalf" not in session.players
 
     def test_drop_not_loaded(self, capsys):
-        cmd = PlayerDropCommand()
-        args = _create_args()
-        args.name = "gandalf"
+        session = _create_session()
+        domain = PlayerDomain()
 
-        cmd.handle(args)
+        result = domain.drop_item(session, "gandalf")
 
+        assert result is False
         captured = capsys.readouterr()
         assert "not loaded" in captured.out
 
+    def test_drop_active_player(self, capsys):
+        session = _create_session()
+        session.players["gandalf"] = Character(name="Gandalf")
+        session.active_player = "gandalf"
+        domain = PlayerDomain()
 
-class TestPlayerList:
-    def test_list_empty(self, capsys):
-        cmd = PlayerListCommand()
-        args = _create_args()
+        result = domain.drop_item(session, "gandalf")
 
-        cmd.handle(args)
-
+        assert result is True
+        assert session.active_player is None
         captured = capsys.readouterr()
-        assert "No characters loaded" in captured.out
+        assert "Active player cleared" in captured.out
 
-    def test_list_with_characters(self, capsys):
-        cmd = PlayerListCommand()
-        args = _create_args()
-        args._session.players["gandalf"] = Character(name="Gandalf")
-        args._session.players["frodo"] = Character(name="Frodo")
+    def test_drop_defaults_to_active(self, capsys):
+        session = _create_session()
+        session.players["gandalf"] = Character(name="Gandalf")
+        session.active_player = "gandalf"
+        domain = PlayerDomain()
 
-        cmd.handle(args)
+        result = domain.drop_item(session, None)
 
-        captured = capsys.readouterr()
-        assert "Loaded characters:" in captured.out
-        assert "gandalf" in captured.out
-        assert "frodo" in captured.out
+        assert result is True
+        assert "gandalf" not in session.players
 
 
 class TestPlayerShow:
-    def test_show_not_loaded(self, capsys):
-        cmd = PlayerShowCommand()
-        args = _create_args()
-        args.name = "gandalf"
+    def test_show_not_loaded(self):
+        session = _create_session()
+        domain = PlayerDomain()
 
-        cmd.handle(args)
+        result = domain.show_item(session, "gandalf")
+        assert result is None
 
-        captured = capsys.readouterr()
-        assert "not loaded" in captured.out
-
-    def test_show_full_character(self, capsys):
-        cmd = PlayerShowCommand()
-        args = _create_args()
-        args.name = "gandalf"
-
+    def test_show_full_character(self):
+        session = _create_session()
         char = Character(
             name="Gandalf",
             system="rolemaster",
@@ -155,35 +180,42 @@ class TestPlayerShow:
             skills={"channeling": 85},
             counts={"hit_points": (25, 45)},
         )
-        args._session.players["gandalf"] = char
+        session.players["gandalf"] = char
+        domain = PlayerDomain()
 
-        cmd.handle(args)
+        result = domain.show_item(session, "gandalf")
 
-        captured = capsys.readouterr()
-        assert "Name: Gandalf" in captured.out
-        assert "System: rolemaster" in captured.out
-        assert "player: Dave" in captured.out
-        assert "race: Istari" in captured.out
-        assert "strength: 75" in captured.out
-        assert "agility: 60" in captured.out
-        assert "channeling: 85" in captured.out
-        assert "hit_points: 25/45" in captured.out
+        assert "Name: Gandalf" in result
+        assert "System: rolemaster" in result
+        assert "player: Dave" in result
+        assert "race: Istari" in result
+        assert "strength: 75" in result
+        assert "agility: 60" in result
+        assert "channeling: 85" in result
+        assert "hit_points: 25/45" in result
 
-    def test_show_minimal_character(self, capsys):
-        cmd = PlayerShowCommand()
-        args = _create_args()
-        args.name = "simple"
-
+    def test_show_minimal_character(self):
+        session = _create_session()
         char = Character(name="Simple")
-        args._session.players["simple"] = char
+        session.players["simple"] = char
+        domain = PlayerDomain()
 
-        cmd.handle(args)
+        result = domain.show_item(session, "simple")
 
-        captured = capsys.readouterr()
-        assert "Name: Simple" in captured.out
-        assert "System: generic" in captured.out
+        assert "Name: Simple" in result
+        assert "System: generic" in result
         # Should not show empty sections
-        assert "Strings:" not in captured.out
-        assert "Stats:" not in captured.out
-        assert "Skills:" not in captured.out
-        assert "Counts:" not in captured.out
+        assert "Strings:" not in result
+        assert "Stats:" not in result
+        assert "Skills:" not in result
+        assert "Counts:" not in result
+
+    def test_show_defaults_to_active(self):
+        session = _create_session()
+        session.players["gandalf"] = Character(name="Gandalf")
+        session.active_player = "gandalf"
+        domain = PlayerDomain()
+
+        result = domain.show_item(session, None)
+
+        assert "Name: Gandalf" in result
