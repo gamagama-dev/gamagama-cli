@@ -8,6 +8,7 @@ version = "0.1.0"
 description = "A Game Master Game Manager for tabletop RPGs."
 readme = "README.md"
 requires-python = ">=3.8"
+dependencies = ["gamagama-core"]
 
 [project.scripts]
 gg-cli = "gamagama.cli.core.main:run"

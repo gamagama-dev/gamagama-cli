@@ -1,7 +1,8 @@
 from gamagama.cli.commands.system import SystemDomain
 from gamagama.cli.core.session import Session
 from gamagama.cli.core.tree import Tree
-from gamagama.cli.systems import RolemasterSystem, GenericSystem
+from gamagama.cli.systems import GenericSystem
+from gamagama.rmu.system import RMUSystem
 
 
 def _create_session():
@@ -18,7 +19,7 @@ class TestSystemDomain:
         items = domain.list_items(session)
 
         assert "generic" in items
-        assert "rolemaster" in items
+        assert "rmu" in items
 
     def test_get_active_default(self):
         session = _create_session()
@@ -31,12 +32,12 @@ class TestSystemDomain:
         session = _create_session()
         domain = SystemDomain()
 
-        result = domain.set_active(session, "rolemaster")
+        result = domain.set_active(session, "rmu")
 
         assert result is True
-        assert isinstance(session.system, RolemasterSystem)
+        assert isinstance(session.system, RMUSystem)
         captured = capsys.readouterr()
-        assert "System changed to: rolemaster" in captured.out
+        assert "System changed to: rmu" in captured.out
 
     def test_set_active_invalid(self, capsys):
         session = _create_session()
@@ -55,7 +56,7 @@ class TestSystemDomain:
         session.active_schema = "character"
         domain = SystemDomain()
 
-        domain.set_active(session, "rolemaster")
+        domain.set_active(session, "rmu")
 
         # Changing system should clear schema
         assert session.active_schema is None

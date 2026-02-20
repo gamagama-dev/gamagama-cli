@@ -11,7 +11,7 @@ from .tree import Branch
 from .domain import DomainBranch
 from .session import Session
 from .config import load_config, validate_config
-from gamagama.cli.systems import SYSTEMS, RolemasterSystem
+from gamagama.cli.systems import SYSTEMS
 
 
 def run():

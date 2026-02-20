@@ -4,7 +4,8 @@ from typing import Dict, Optional
 from gamagama.cli.characters import Character, CharacterStore
 from gamagama.cli.core.registry import CommandTree
 from gamagama.cli.core.tree import Node
-from gamagama.cli.systems import GameSystem, RolemasterSystem, GenericSystem
+from gamagama.core import GameSystem
+from gamagama.cli.systems import GenericSystem
 
 
 @dataclass

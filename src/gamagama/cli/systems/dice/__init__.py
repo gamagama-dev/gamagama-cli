@@ -1,2 +1,3 @@
-from .base import DiceEngine
-from .rolemaster import RolemasterDiceEngine
+from gamagama.core import DiceEngine
+
+__all__ = ["DiceEngine"]

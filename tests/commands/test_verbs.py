@@ -89,7 +89,7 @@ class TestListCommand:
 
         captured = capsys.readouterr()
         assert "generic" in captured.out
-        assert "rolemaster" in captured.out
+        assert "rmu" in captured.out
 
     def test_list_player_empty(self, capsys):
         session = _create_session()
@@ -130,20 +130,20 @@ class TestListCommand:
 
         captured = capsys.readouterr()
         assert "generic" in captured.out
-        assert "rolemaster" in captured.out
+        assert "rmu" in captured.out
 
 
 class TestSetCommand:
     def test_set_system(self, capsys):
         session = _create_session()
         cmd = SetCommand()
-        args = _create_args(session, target="system", name="rolemaster")
+        args = _create_args(session, target="system", name="rmu")
 
         cmd.handle(args)
 
         captured = capsys.readouterr()
-        assert "System changed to: rolemaster" in captured.out
-        assert session.system.name == "rolemaster"
+        assert "System changed to: rmu" in captured.out
+        assert session.system.name == "rmu"
 
     def test_set_player_not_loaded(self, capsys):
         session = _create_session()

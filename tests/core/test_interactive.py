@@ -77,7 +77,7 @@ def test_list_command(capsys):
     captured = capsys.readouterr()
 
     assert "generic" in captured.out
-    assert "rolemaster" in captured.out
+    assert "rmu" in captured.out
 
 
 def test_set_command(capsys):
@@ -87,12 +87,12 @@ def test_set_command(capsys):
     tree = CommandTree()
     discover_commands(tree)
 
-    inputs = ["set system rolemaster", "show", "quit"]
+    inputs = ["set system rmu", "show", "quit"]
 
     with patch("builtins.input", side_effect=inputs):
         run_interactive_mode(tree, GenericSystem)
 
     captured = capsys.readouterr()
 
-    assert "System changed to: rolemaster" in captured.out
-    assert "system: rolemaster" in captured.out
+    assert "System changed to: rmu" in captured.out
+    assert "system: rmu" in captured.out

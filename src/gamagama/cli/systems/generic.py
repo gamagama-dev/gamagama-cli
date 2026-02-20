@@ -1,4 +1,4 @@
-from .base import GameSystem
+from gamagama.core import GameSystem
 
 
 class GenericSystem(GameSystem):
